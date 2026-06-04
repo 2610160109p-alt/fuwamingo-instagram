@@ -85,7 +85,7 @@
       max-width: 1200px;
       margin: 0 auto;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 14px;
     }
 
     .header-logo {
@@ -105,15 +105,20 @@
     .header-user-info {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-size: 0.8rem;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 8px 6px 12px;
     }
 
     .header-user-info select {
-      padding: 8px 12px;
-      min-height: 38px;
+      padding: 8px 34px 8px 12px;
+      min-height: 40px;
+      min-width: 180px;
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 999px;
       background: var(--white);
       color: var(--text);
       font-weight: 600;
@@ -124,29 +129,31 @@
     /* Tabs */
     .tabs-container {
       max-width: 1200px;
-      margin: 15px auto 0;
+      margin: 16px auto 0;
       padding: 0 10px;
     }
 
     .tabs {
       display: flex;
       background: rgba(142, 115, 101, 0.06);
-      padding: 4px;
-      border-radius: 30px;
-      gap: 4px;
+      padding: 6px;
+      border-radius: 18px;
+      gap: 6px;
+      border: 1px solid rgba(234, 220, 214, 0.75);
+      box-shadow: var(--shadow-sm);
     }
 
     .tab {
       flex: 1;
       min-height: 44px;
-      padding: 8px 12px;
+      padding: 10px 14px;
       color: var(--text-light);
       cursor: pointer;
       border: none;
       background: none;
       font-size: 0.85rem;
       font-weight: 700;
-      border-radius: 25px;
+      border-radius: 14px;
       transition: var(--transition);
       display: flex;
       align-items: center;
@@ -158,6 +165,11 @@
       background-color: var(--white);
       color: var(--primary);
       box-shadow: var(--shadow-sm);
+    }
+
+    .tab:hover {
+      color: var(--primary-hover);
+      background: rgba(255, 255, 255, 0.55);
     }
 
     /* Container & Grid */
@@ -729,37 +741,38 @@
     /* Sub-tabs inside Staff View */
     .sub-tabs {
       display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-      border-bottom: 1.5px solid var(--border);
-      padding-bottom: 6px;
+      gap: 6px;
+      margin-bottom: 16px;
+      background: rgba(142, 115, 101, 0.06);
+      border: 1px solid rgba(234, 220, 214, 0.75);
+      border-radius: 14px;
+      padding: 6px;
     }
 
     .sub-tab {
-      background: none;
+      flex: 1;
+      background: transparent;
       border: none;
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--text-light);
       cursor: pointer;
-      padding: 4px 8px;
+      padding: 10px 8px;
       position: relative;
-      min-height: 36px;
+      min-height: 42px;
+      border-radius: 10px;
+      transition: var(--transition);
     }
 
     .sub-tab.active {
       color: var(--primary);
+      background: var(--white);
+      box-shadow: var(--shadow-sm);
     }
 
-    .sub-tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background-color: var(--primary);
-      border-radius: 3px 3px 0 0;
+    .sub-tab:hover {
+      color: var(--primary-hover);
+      background: rgba(255, 255, 255, 0.55);
     }
 
     /* Staff History List */
@@ -896,21 +909,24 @@
 
     /* Calendar Grid */
     .calendar-card {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
+      padding: 18px;
     }
 
     .calendar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
     }
 
     .calendar-nav-btn {
       background: none;
       border: 1px solid var(--border);
-      width: 28px;
-      height: 28px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       cursor: pointer;
       display: inline-flex;
@@ -928,7 +944,7 @@
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
+      gap: 5px;
     }
 
     .calendar-day-header {
@@ -944,14 +960,14 @@
       background: var(--white);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 2px;
+      padding: 5px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       font-size: 0.7rem;
       cursor: pointer;
       transition: var(--transition);
-      min-height: 32px;
+      min-height: 46px;
     }
 
     .calendar-cell:hover {
@@ -992,48 +1008,116 @@
 
     /* Owner Timeline list */
     .owner-storyboard-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 8px;
-      background: #FFFDFC;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
-      max-height: 220px;
-      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
     }
 
     .owner-storyboard-item {
       display: grid;
-      grid-template-columns: 35px 55px 1fr 1fr;
-      border-bottom: 1px solid var(--border);
-      padding: 6px 0;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .owner-storyboard-item:last-child {
-      border-bottom: none;
+      grid-template-rows: auto auto 1fr;
+      gap: 10px;
+      background: #FFFDFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
     }
 
     .owner-storyboard-item img {
-      width: 45px;
-      height: 45px;
+      width: 100%;
+      height: clamp(180px, 28vw, 280px);
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: 10px;
       border: 1px solid var(--border);
+      background: var(--white);
+      cursor: zoom-in;
     }
 
     .owner-storyboard-item-meta {
-      padding-left: 6px;
-      font-size: 0.72rem;
+      font-size: 0.82rem;
+      line-height: 1.55;
     }
 
     .owner-storyboard-item-meta strong {
       display: block;
-      font-size: 0.65rem;
+      font-size: 0.72rem;
       color: var(--text-light);
+      margin-bottom: 3px;
+    }
+
+    .owner-storyboard-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      min-width: 34px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--primary);
+      color: var(--white);
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .storyboard-zoom-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(46, 39, 36, 0.72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .storyboard-zoom-dialog {
+      width: min(960px, 96vw);
+      max-height: 92vh;
+      overflow: auto;
+      background: var(--white);
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      padding: 14px;
+    }
+
+    .storyboard-zoom-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .storyboard-zoom-close {
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      border-radius: 999px;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .storyboard-zoom-dialog img {
+      width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      border-radius: 10px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+    }
+
+    .storyboard-zoom-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+      font-size: 0.9rem;
     }
 
     /* Review view columns */
@@ -1045,6 +1129,64 @@
 
     @media (max-width: 800px) {
       .review-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-container {
+        justify-content: center;
+      }
+
+      .header-logo {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-user-info {
+        width: 100%;
+        border-radius: 14px;
+        justify-content: space-between;
+      }
+
+      .header-user-info select {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .tabs {
+        border-radius: 14px;
+      }
+
+      .tab {
+        font-size: 0.8rem;
+        padding: 10px 8px;
+      }
+
+      .calendar-card {
+        padding: 14px;
+      }
+
+      .calendar-header {
+        align-items: stretch;
+      }
+
+      .calendar-header h2 {
+        width: 100%;
+      }
+
+      .calendar-cell {
+        min-height: 42px;
+        padding: 4px;
+      }
+
+      .owner-storyboard-timeline {
+        grid-template-columns: 1fr;
+      }
+
+      .owner-storyboard-item img {
+        height: min(72vw, 320px);
+      }
+
+      .storyboard-zoom-meta {
         grid-template-columns: 1fr;
       }
     }
@@ -1122,6 +1264,26 @@
 <body>
 
 <canvas id="confetti-canvas"></canvas>
+
+<div id="storyboard-zoom-modal" class="storyboard-zoom-modal hidden" onclick="closeStoryboardZoom()">
+  <div class="storyboard-zoom-dialog" onclick="event.stopPropagation()">
+    <div class="storyboard-zoom-header">
+      <span id="storyboard-zoom-title">絵コンテ詳細</span>
+      <button type="button" class="storyboard-zoom-close" onclick="closeStoryboardZoom()">×</button>
+    </div>
+    <img id="storyboard-zoom-img" alt="絵コンテ拡大画像">
+    <div class="storyboard-zoom-meta">
+      <div class="owner-storyboard-item-meta">
+        <strong>📷 撮影・構図</strong>
+        <p id="storyboard-zoom-memo">-</p>
+      </div>
+      <div class="owner-storyboard-item-meta">
+        <strong>✨ フィルター</strong>
+        <p id="storyboard-zoom-filter">-</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ==================== HEADER ==================== -->
 <header>
@@ -1553,7 +1715,11 @@
                   <div class="mockup-image-area" id="rev-mockup-img-area">
                     <button class="carousel-control prev" style="width:20px; height:20px; font-size:0.5rem;" onclick="navigateRevCarousel(-1)">◀</button>
                     <button class="carousel-control next" style="width:20px; height:20px; font-size:0.5rem;" onclick="navigateRevCarousel(1)">▶</button>
-                    <img id="rev-img" alt="プレビュー">
+                    <div class="mockup-image-placeholder" id="rev-placeholder" style="font-size:0.6rem;">
+                      <span class="icon" style="font-size:1.2rem;">📷</span>
+                      <span>画像がありません</span>
+                    </div>
+                    <img id="rev-img" class="hidden" alt="プレビュー">
                     <div id="rev-mockup-indicators" class="carousel-indicators"></div>
                   </div>
                   <div class="mockup-caption-area" style="padding:8px; font-size:0.7rem;">
@@ -1663,6 +1829,12 @@
       if (e.key === 'Enter') {
         e.preventDefault();
         checkOwnerPassword();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeStoryboardZoom();
       }
     });
   });
@@ -1857,6 +2029,7 @@
       errorEl.classList.add('hidden');
       
       // ロック解除してオーナーメインコンテンツを表示
+      document.getElementById('owner-auth-pass').value = '';
       document.getElementById('owner-auth-panel').classList.add('hidden');
       document.getElementById('owner-main-content').classList.remove('hidden');
       
@@ -2035,42 +2208,37 @@
 
   function navigateCarousel(dir) {
     const cuts = collectStoryboardCuts();
-    const activeCuts = cuts.filter(c => c.image !== '');
-    if (activeCuts.length <= 1) return;
-
     currentCarouselIndex += dir;
-    if (currentCarouselIndex >= activeCuts.length) {
+    if (currentCarouselIndex >= cuts.length) {
       currentCarouselIndex = 0;
     } else if (currentCarouselIndex < 0) {
-      currentCarouselIndex = activeCuts.length - 1;
+      currentCarouselIndex = cuts.length - 1;
     }
-    renderCarouselImage(activeCuts, currentCarouselIndex, 'mockup-img', 'mockup-placeholder', 'mockup-indicators');
+    renderCarouselImage(cuts, currentCarouselIndex, 'mockup-img', 'mockup-placeholder', 'mockup-indicators');
   }
 
-  function renderCarouselImage(activeCuts, index, imgId, placeholderId, indicatorsId) {
+  function renderCarouselImage(allCuts, index, imgId, placeholderId, indicatorsId) {
     const imgEl = document.getElementById(imgId);
     const placeholderEl = document.getElementById(placeholderId);
     const indContainer = document.getElementById(indicatorsId);
 
     indContainer.innerHTML = '';
-    if (activeCuts.length > 1) {
-      activeCuts.forEach((_, idx) => {
-        const dot = document.createElement('span');
-        dot.className = `carousel-dot ${idx === index ? 'active' : ''}`;
-        dot.onclick = () => {
-          if (imgId === 'mockup-img') {
-            currentCarouselIndex = idx;
-            renderCarouselImage(activeCuts, currentCarouselIndex, imgId, placeholderId, indicatorsId);
-          } else {
-            currentRevCarouselIndex = idx;
-            renderCarouselImage(activeCuts, currentRevCarouselIndex, imgId, placeholderId, indicatorsId);
-          }
-        };
-        indContainer.appendChild(dot);
-      });
-    }
+    allCuts.forEach((_, idx) => {
+      const dot = document.createElement('span');
+      dot.className = `carousel-dot ${idx === index ? 'active' : ''}`;
+      dot.onclick = () => {
+        if (imgId === 'mockup-img') {
+          currentCarouselIndex = idx;
+          renderCarouselImage(allCuts, currentCarouselIndex, imgId, placeholderId, indicatorsId);
+        } else {
+          currentRevCarouselIndex = idx;
+          renderCarouselImage(allCuts, currentRevCarouselIndex, imgId, placeholderId, indicatorsId);
+        }
+      };
+      indContainer.appendChild(dot);
+    });
 
-    const cut = activeCuts[index];
+    const cut = allCuts[index];
     if (cut && cut.image) {
       placeholderEl.classList.add('hidden');
       imgEl.src = cut.image;
@@ -2079,27 +2247,45 @@
       placeholderEl.classList.remove('hidden');
       imgEl.classList.add('hidden');
       imgEl.src = '';
+      
+      const cutNum = index + 1;
+      placeholderEl.replaceChildren();
+
+      const icon = document.createElement('span');
+      icon.className = 'icon';
+      icon.textContent = '📷';
+      placeholderEl.appendChild(icon);
+
+      const message = document.createElement('span');
+      message.textContent = `カット ${cutNum} は画像がありません`;
+      placeholderEl.appendChild(message);
+
+      if (cut && cut.memo) {
+        const memo = document.createElement('span');
+        memo.style.fontSize = '0.65rem';
+        memo.style.color = 'var(--text-light)';
+        memo.style.maxWidth = '90%';
+        memo.style.marginTop = '5px';
+        memo.style.textAlign = 'center';
+        memo.style.display = 'block';
+        memo.textContent = `メモ: ${cut.memo}`;
+        placeholderEl.appendChild(memo);
+      }
     }
   }
 
   function updatePreview() {
     const cuts = collectStoryboardCuts();
-    const activeCuts = cuts.filter(c => c.image !== '');
 
     const prevBtn = document.querySelector('#staff-view .carousel-control.prev');
     const nextBtn = document.querySelector('#staff-view .carousel-control.next');
-    if (activeCuts.length <= 1) {
-      prevBtn.classList.add('hidden');
-      nextBtn.classList.add('hidden');
-    } else {
-      prevBtn.classList.remove('hidden');
-      nextBtn.classList.remove('hidden');
-    }
+    prevBtn.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
 
-    if (currentCarouselIndex >= activeCuts.length) {
+    if (currentCarouselIndex >= cuts.length) {
       currentCarouselIndex = 0;
     }
-    renderCarouselImage(activeCuts, currentCarouselIndex, 'mockup-img', 'mockup-placeholder', 'mockup-indicators');
+    renderCarouselImage(cuts, currentCarouselIndex, 'mockup-img', 'mockup-placeholder', 'mockup-indicators');
 
     // キャプション本文の組み立て
     const title = document.getElementById('post-title').value.trim();
@@ -2432,6 +2618,8 @@
   // ==================== オーナー画面：ダッシュボードとカレンダー ====================
 
   function renderDashboard() {
+    if (!isOwnerAuthenticated) return;
+
     const total = submissions.length;
     const pending = submissions.filter(s => s.status === 'pending').length;
     const approved = submissions.filter(s => s.status === 'approved').length;
@@ -2506,6 +2694,8 @@
   }
 
   function navigateMonth(dir) {
+    if (!isOwnerAuthenticated) return;
+
     calendarMonth += dir;
     if (calendarMonth > 11) {
       calendarMonth = 0;
@@ -2518,6 +2708,8 @@
   }
 
   function renderCalendar() {
+    if (!isOwnerAuthenticated) return;
+
     const monthYearSpan = document.getElementById('calendar-month-year');
     monthYearSpan.textContent = `${calendarYear}年${calendarMonth + 1}月`;
 
@@ -2579,6 +2771,8 @@
   }
 
   function filterListByDate(dateStr) {
+    if (!isOwnerAuthenticated) return;
+
     renderDashboard();
     const list = document.getElementById('submission-list');
     const filtered = submissions.filter(s => s.date === dateStr);
@@ -2589,7 +2783,15 @@
     filterHeader.style.fontWeight = '700';
     filterHeader.style.fontSize = '0.85rem';
     filterHeader.style.color = 'var(--primary)';
-    filterHeader.innerHTML = `📅 ${dateStr} の投稿予定 (${filtered.length}件) <span style="font-weight:normal; text-decoration:underline; cursor:pointer; margin-left:10px;" onclick="renderDashboard()">[フィルタ解除]</span>`;
+    filterHeader.appendChild(document.createTextNode(`📅 ${dateStr} の投稿予定 (${filtered.length}件) `));
+    const clearFilter = document.createElement('span');
+    clearFilter.style.fontWeight = 'normal';
+    clearFilter.style.textDecoration = 'underline';
+    clearFilter.style.cursor = 'pointer';
+    clearFilter.style.marginLeft = '10px';
+    clearFilter.textContent = '[フィルタ解除]';
+    clearFilter.onclick = renderDashboard;
+    filterHeader.appendChild(clearFilter);
     list.appendChild(filterHeader);
 
     if (filtered.length === 0) {
@@ -2644,6 +2846,8 @@
   // ==================== オーナー画面：詳細レビュー ====================
 
   function openReview(id) {
+    if (!isOwnerAuthenticated) return;
+
     currentReviewId = id;
     const sub = submissions.find(s => s.id === id);
     if (!sub) return;
@@ -2682,11 +2886,13 @@
       row.className = 'owner-storyboard-item';
       
       const numDiv = document.createElement('div');
-      numDiv.style.fontWeight = '800';
+      numDiv.className = 'owner-storyboard-num';
       numDiv.textContent = `#${idx + 1}`;
       
       const img = document.createElement('img');
       img.src = cut.image || dummySvgDataUri;
+      img.alt = `絵コンテ カット${idx + 1}`;
+      img.onclick = () => openStoryboardZoom(cut, idx);
       
       const memoDiv = document.createElement('div');
       memoDiv.className = 'owner-storyboard-item-meta';
@@ -2712,17 +2918,11 @@
     });
 
     currentRevCarouselIndex = 0;
-    const activeRevCuts = sub.cuts.filter(c => c.image !== '');
     
     const prevBtn = document.querySelector('#owner-view .carousel-control.prev');
     const nextBtn = document.querySelector('#owner-view .carousel-control.next');
-    if (activeRevCuts.length <= 1) {
-      prevBtn.classList.add('hidden');
-      nextBtn.classList.add('hidden');
-    } else {
-      prevBtn.classList.remove('hidden');
-      nextBtn.classList.remove('hidden');
-    }
+    prevBtn.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
 
     updateRevPreview(sub);
 
@@ -2747,21 +2947,18 @@
   function navigateRevCarousel(dir) {
     const sub = submissions.find(s => s.id === currentReviewId);
     if (!sub) return;
-    const activeRevCuts = sub.cuts.filter(c => c.image !== '');
-    if (activeRevCuts.length <= 1) return;
 
     currentRevCarouselIndex += dir;
-    if (currentRevCarouselIndex >= activeRevCuts.length) {
+    if (currentRevCarouselIndex >= sub.cuts.length) {
       currentRevCarouselIndex = 0;
     } else if (currentRevCarouselIndex < 0) {
-      currentRevCarouselIndex = activeRevCuts.length - 1;
+      currentRevCarouselIndex = sub.cuts.length - 1;
     }
     updateRevPreview(sub);
   }
 
   function updateRevPreview(sub) {
-    const activeRevCuts = sub.cuts.filter(c => c.image !== '');
-    renderCarouselImage(activeRevCuts, currentRevCarouselIndex, 'rev-img', 'rev-mockup-img-area', 'rev-mockup-indicators');
+    renderCarouselImage(sub.cuts, currentRevCarouselIndex, 'rev-img', 'rev-placeholder', 'rev-mockup-indicators');
     
     let textVal = '';
     if (sub.theme) textVal += `【${sub.theme}】`;
@@ -2772,7 +2969,23 @@
     document.getElementById('rev-mockup-tags').textContent = sub.tags.join(' ');
   }
 
+  function openStoryboardZoom(cut, index) {
+    const modal = document.getElementById('storyboard-zoom-modal');
+    document.getElementById('storyboard-zoom-title').textContent = `絵コンテ詳細 カット ${index + 1}`;
+    document.getElementById('storyboard-zoom-img').src = cut.image || dummySvgDataUri;
+    document.getElementById('storyboard-zoom-memo').textContent = cut.memo || '（記入なし）';
+    document.getElementById('storyboard-zoom-filter').textContent = cut.filter || '（未設定）';
+    modal.classList.remove('hidden');
+  }
+
+  function closeStoryboardZoom() {
+    const modal = document.getElementById('storyboard-zoom-modal');
+    if (modal) modal.classList.add('hidden');
+  }
+
   function updateStatus(newStatus) {
+    if (!isOwnerAuthenticated) return;
+
     if (currentReviewId === null) return;
     const subIdx = submissions.findIndex(s => s.id === currentReviewId);
     if (subIdx === -1) return;

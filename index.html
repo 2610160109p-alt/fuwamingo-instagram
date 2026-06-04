@@ -1,0 +1,2875 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>☕ CAFÉ SNS - Instagram 投稿管理</title>
+  <meta name="description" content="ネット接続不要・単一ファイルで動作する、カフェ専用のInstagram投稿・管理システム。">
+  
+  <style>
+    /* ==================== デザインシステム (CSS) ==================== */
+    :root {
+      --primary: #FF7B90;
+      --primary-light: #FFB3BF;
+      --primary-hover: #E85F76;
+      --secondary: #8E7365;
+      --secondary-light: #BCA89F;
+      --secondary-hover: #765D50;
+      --bg: #FFF9F6;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --text: #2E2724;
+      --text-light: #7E706A;
+      --border: #EADCD6;
+      --border-focus: #FF7B90;
+      --white: #FFFFFF;
+      --shadow: 0 10px 30px rgba(142, 115, 101, 0.05);
+      --shadow-sm: 0 4px 12px rgba(142, 115, 101, 0.03);
+      --shadow-lg: 0 16px 40px rgba(142, 115, 101, 0.1);
+      --success: #5D9C59;
+      --success-light: #EAF2E8;
+      --warning: #E7B10A;
+      --warning-light: #FEF9E7;
+      --danger: #C92C3B;
+      --danger-light: #FCEAEA;
+      --transition: all 0.2s ease-in-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 123, 144, 0.04) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(142, 115, 101, 0.04) 0px, transparent 40%);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(142, 115, 101, 0.03);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--secondary-light);
+      border-radius: 3px;
+    }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 2px 15px rgba(142, 115, 101, 0.02);
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--text);
+    }
+
+    .header-logo svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .header-user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+    }
+
+    .header-user-info select {
+      padding: 8px 12px;
+      min-height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--white);
+      color: var(--text);
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Tabs */
+    .tabs-container {
+      max-width: 1200px;
+      margin: 15px auto 0;
+      padding: 0 10px;
+    }
+
+    .tabs {
+      display: flex;
+      background: rgba(142, 115, 101, 0.06);
+      padding: 4px;
+      border-radius: 30px;
+      gap: 4px;
+    }
+
+    .tab {
+      flex: 1;
+      min-height: 44px;
+      padding: 8px 12px;
+      color: var(--text-light);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 25px;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .tab.active {
+      background-color: var(--white);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Container & Grid */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .view-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .view-grid {
+        grid-template-columns: 1fr;
+      }
+      .sticky-preview {
+        position: static;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 20px 15px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      max-width: 100%;
+      word-wrap: break-word;
+    }
+
+    h2 {
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 4px solid var(--primary);
+      padding-left: 8px;
+    }
+
+    h3 {
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    /* Feedback Notice */
+    .feedback-notice {
+      background-color: var(--danger-light);
+      border: 1.5px dashed var(--danger);
+      color: var(--danger);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+
+    .feedback-notice h4 {
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Fixed Storyboard Layout (Max 3 cuts, stacked vertical for mobile) */
+    .storyboard-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .storyboard-box {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      padding: 12px;
+      max-width: 100%;
+    }
+
+    .storyboard-box-header {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+
+    .storyboard-upload-area {
+      aspect-ratio: 16/9;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+      margin-bottom: 10px;
+      max-width: 100%;
+    }
+
+    .storyboard-upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(255, 123, 144, 0.02);
+    }
+
+    .storyboard-upload-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .storyboard-upload-area span.placeholder-text {
+      font-size: 0.72rem;
+      color: var(--text-light);
+      text-align: center;
+      padding: 10px;
+    }
+
+    .btn-delete-img {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      color: var(--white);
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      z-index: 5;
+    }
+
+    /* Filter Chips Selection */
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .filter-chip-label {
+      cursor: pointer;
+    }
+
+    .filter-chip-label input {
+      display: none;
+    }
+
+    .filter-chip-label span {
+      display: inline-block;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-light);
+      background: var(--white);
+      transition: var(--transition);
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+    }
+
+    .filter-chip-label input:checked + span {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    /* Forms general */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--text);
+    }
+
+    input[type="text"], 
+    input[type="date"], 
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      min-height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      background-color: var(--white);
+      color: var(--text);
+      transition: var(--transition);
+      outline: none;
+    }
+
+    input[type="text"]:focus, 
+    input[type="date"]:focus, 
+    textarea:focus,
+    select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(255, 123, 144, 0.1);
+    }
+
+    /* Theme Option Radio Chips */
+    .theme-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .theme-chip {
+      cursor: pointer;
+    }
+
+    .theme-chip input {
+      display: none;
+    }
+
+    .theme-chip span {
+      display: inline-block;
+      background: var(--white);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      transition: var(--transition);
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+    }
+
+    .theme-chip input:checked + span {
+      background: var(--secondary);
+      border-color: var(--secondary);
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: var(--primary);
+      color: var(--white);
+      padding: 10px 20px;
+      min-height: 44px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(255, 123, 144, 0.12);
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      border: 1px solid var(--border);
+      color: var(--text-light);
+      box-shadow: none;
+      margin-top: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #FFF5F6;
+      border-color: var(--primary-light);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    /* Tag badge inputs */
+    .tag-badge-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: var(--secondary-light);
+      color: var(--white);
+      padding: 4px 8px;
+      border-radius: 15px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .tag-badge span.remove-tag {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      font-size: 0.65rem;
+    }
+
+    .tag-badge span.remove-tag:hover {
+      background: var(--danger);
+    }
+
+    .caption-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .char-counter-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .progress-ring__circle {
+      transition: stroke-dashoffset 0.1s;
+      transform-origin: 50% 50%;
+    }
+
+    /* Checkbox list */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-light);
+      user-select: none;
+      font-size: 0.8rem;
+      padding: 6px 0; /* タッチ領域確保 */
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    /* Instagram Mockup (Real Preview - fully responsive max-width 100%) */
+    .sticky-preview {
+      position: sticky;
+      top: 70px;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+
+    .instagram-mockup {
+      background: var(--white);
+      border: 8px solid #2e2724;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      position: relative;
+    }
+
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      gap: 8px;
+      border-bottom: 1px solid #F0ECE9;
+    }
+
+    .mockup-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--secondary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: var(--white);
+    }
+
+    .mockup-user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .mockup-username {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .mockup-location {
+      font-size: 0.6rem;
+      color: var(--text-light);
+    }
+
+    .mockup-dots {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .mockup-image-area {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background-color: #F8F5F2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .mockup-image-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .mockup-image-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--secondary-light);
+      text-align: center;
+      font-size: 0.7rem;
+    }
+
+    .mockup-image-placeholder span.icon {
+      font-size: 1.8rem;
+    }
+
+    .carousel-control {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--white);
+      border: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      z-index: 10;
+    }
+
+    .carousel-control.prev { left: 6px; }
+    .carousel-control.next { right: 6px; }
+
+    .carousel-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      position: absolute;
+      bottom: 8px;
+      width: 100%;
+      z-index: 10;
+    }
+
+    .carousel-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+    }
+
+    .carousel-dot.active {
+      background: var(--white);
+      transform: scale(1.2);
+    }
+
+    .mockup-action-bar {
+      display: flex;
+      padding: 6px 10px;
+      gap: 10px;
+      font-size: 1rem;
+    }
+
+    .mockup-action-bar .bookmark-icon {
+      margin-left: auto;
+    }
+
+    .mockup-likes {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0 10px;
+      margin-bottom: 4px;
+    }
+
+    .mockup-caption-area {
+      padding: 0 10px 10px;
+      font-size: 0.75rem;
+      word-break: break-all;
+    }
+
+    .mockup-caption-username {
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    .mockup-caption-text {
+      white-space: pre-wrap;
+    }
+
+    .mockup-hashtags {
+      color: #00376B;
+      display: block;
+      margin-top: 3px;
+    }
+
+    /* Sub-tabs inside Staff View */
+    .sub-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      border-bottom: 1.5px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .sub-tab {
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-light);
+      cursor: pointer;
+      padding: 4px 8px;
+      position: relative;
+      min-height: 36px;
+    }
+
+    .sub-tab.active {
+      color: var(--primary);
+    }
+
+    .sub-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--primary);
+      border-radius: 3px 3px 0 0;
+    }
+
+    /* Staff History List */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      gap: 8px;
+    }
+
+    .history-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .history-item.rejected {
+      border-color: rgba(201, 44, 59, 0.15);
+      background-color: var(--danger-light);
+    }
+
+    .history-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .history-item-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f0f0f0;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .history-item-info {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .history-item-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-item-meta {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 15px;
+      color: var(--white);
+      font-size: 0.65rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.pending { 
+      background-color: var(--warning-light); 
+      color: var(--warning);
+      border: 1px solid rgba(231, 177, 10, 0.15);
+    }
+    .badge.approved { 
+      background-color: var(--success-light); 
+      color: var(--success);
+      border: 1px solid rgba(93, 156, 89, 0.15);
+    }
+    .badge.rejected { 
+      background-color: var(--danger-light); 
+      color: var(--danger);
+      border: 1px solid rgba(201, 44, 59, 0.15);
+    }
+
+    /* Owner KPI Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      padding: 12px 8px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .stat-num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .stat-card.total { border-left: 4px solid var(--secondary); }
+    .stat-card.pending { border-left: 4px solid var(--warning); }
+    .stat-card.approved { border-left: 4px solid var(--success); }
+
+    .stat-card.total .stat-num { color: var(--secondary); }
+    .stat-card.pending .stat-num { color: var(--warning); }
+    .stat-card.approved .stat-num { color: var(--success); }
+
+    /* Calendar Grid */
+    .calendar-card {
+      margin-bottom: 15px;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .calendar-nav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--text-light);
+    }
+
+    .calendar-nav-btn:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .calendar-day-header {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-light);
+      padding: 4px 0;
+      text-align: center;
+    }
+
+    .calendar-cell {
+      aspect-ratio: 1 / 1;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 32px;
+    }
+
+    .calendar-cell:hover {
+      border-color: var(--primary-light);
+    }
+
+    .calendar-cell.other-month {
+      opacity: 0.15;
+    }
+
+    .calendar-cell.today {
+      border-color: var(--primary);
+      background: rgba(255, 123, 144, 0.02);
+      font-weight: 700;
+    }
+
+    .calendar-cell-num {
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .calendar-cell-events {
+      display: flex;
+      justify-content: flex-end;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .calendar-dot.pending { background-color: var(--warning); }
+    .calendar-dot.approved { background-color: var(--success); }
+    .calendar-dot.rejected { background-color: var(--danger); }
+
+    /* Owner Timeline list */
+    .owner-storyboard-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+      background: #FFFDFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .owner-storyboard-item {
+      display: grid;
+      grid-template-columns: 35px 55px 1fr 1fr;
+      border-bottom: 1px solid var(--border);
+      padding: 6px 0;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .owner-storyboard-item:last-child {
+      border-bottom: none;
+    }
+
+    .owner-storyboard-item img {
+      width: 45px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .owner-storyboard-item-meta {
+      padding-left: 6px;
+      font-size: 0.72rem;
+    }
+
+    .owner-storyboard-item-meta strong {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--text-light);
+    }
+
+    /* Review view columns */
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 15px;
+    }
+
+    @media (max-width: 800px) {
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .review-info-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .review-info-row {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .review-info-row strong {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-bottom: 2px;
+    }
+
+    .review-info-row span {
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Confetti */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 25px 10px;
+      color: var(--text-light);
+      font-size: 0.8rem;
+    }
+
+    .empty-state span.icon {
+      display: block;
+      font-size: 2.2rem;
+      margin-bottom: 6px;
+    }
+
+    .chip-theme {
+      display: inline-block;
+      padding: 3px 6px;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background-color: var(--secondary-light);
+      color: var(--white);
+    }
+
+    /* Owner password card UI */
+    .owner-auth-container {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 25px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="header-container">
+    <div class="header-logo">
+      <!-- Inline SVG Flamingo Logo -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="#FFF" stroke="#FF7B90" stroke-width="4"/>
+        <path d="M50,25 C45,25 40,28 38,32 C36,36 38,42 42,42 C46,42 48,39 50,37 C52,35 55,34 58,36 C61,38 62,42 60,46 C58,50 52,58 48,64 L48,75 L52,75 L52,66 C55,62 62,54 65,48 C68,42 67,34 62,29 C59,26 55,25 50,25 Z" fill="#FF7B90"/>
+        <path d="M45,75 L45,85 M55,75 L55,85" stroke="#8E7365" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="42" cy="32" r="2.5" fill="#2E2724"/>
+      </svg>
+      <span>☕ CAFÉ SNS</span>
+    </div>
+    
+    <div class="header-user-info">
+      <label for="current-user-select" style="margin-bottom:0; font-size:0.72rem; color:var(--text-light)">操作者:</label>
+      <select id="current-user-select" onchange="handleUserChange()">
+        <option value="staff:佐々木">スタッフ: 佐々木</option>
+        <option value="staff:田中">スタッフ: 田中</option>
+        <option value="staff:山田">スタッフ: 山田</option>
+        <option value="owner">オーナー</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<!-- ==================== MAIN TABS ==================== -->
+<div class="tabs-container">
+  <div class="tabs">
+    <button id="tab-staff-btn" class="tab active" onclick="switchView('staff')">
+      📝 スタッフ画面
+    </button>
+    <button id="tab-owner-btn" class="tab" onclick="switchView('owner')">
+      👑 オーナー画面
+    </button>
+  </div>
+</div>
+
+<!-- ==================== CONTAINER ==================== -->
+<div class="container">
+  
+  <!-- ==================== スタッフ画面 ==================== -->
+  <div id="staff-view" class="view-grid">
+    <!-- 左カラム: エディタ / 履歴リスト -->
+    <div class="left-section">
+      <!-- サブナビゲーション -->
+      <div class="sub-tabs">
+        <button id="subtab-create-btn" class="sub-tab active" onclick="switchStaffSubTab('create')">
+          新規作成
+        </button>
+        <button id="subtab-history-btn" class="sub-tab" onclick="switchStaffSubTab('history')">
+          提出履歴 <span id="staff-rev-count-badge" class="badge rejected" style="display:none; padding:1px 5px; font-size:0.6rem;">0</span>
+        </button>
+      </div>
+
+      <!-- 投稿案作成・修正フォーム -->
+      <div id="staff-editor-card" class="card">
+        <!-- 差し戻しコメント通知 -->
+        <div id="revision-feedback-notice" class="feedback-notice hidden">
+          <h4>⚠️ オーナーからのフィードバック</h4>
+          <p id="revision-feedback-text">-</p>
+        </div>
+
+        <h2 id="editor-title">新規投稿案の作成</h2>
+        
+        <div class="form-group">
+          <label for="post-date">投稿希望日</label>
+          <input type="date" id="post-date">
+        </div>
+
+        <div class="form-group">
+          <label>投稿テーマ</label>
+          <div class="theme-chips">
+            <label class="theme-chip">
+              <input type="radio" name="theme" value="新メニュー" checked onchange="updatePreview()">
+              <span>新メニュー</span>
+            </label>
+            <label class="theme-chip">
+              <input type="radio" name="theme" value="季節イベント" onchange="updatePreview()">
+              <span>季節イベント</span>
+            </label>
+            <label class="theme-chip">
+              <input type="radio" name="theme" value="スタッフ紹介" onchange="updatePreview()">
+              <span>スタッフ紹介</span>
+            </label>
+            <label class="theme-chip">
+              <input type="radio" name="theme" value="カフェ日常" onchange="updatePreview()">
+              <span>カフェ日常</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3コマ固定の絵コンテ用紙 -->
+        <div class="form-group">
+          <label>🎬 絵コンテ入力 (画像は最大3枚まで設定できます)</label>
+          <div class="storyboard-container">
+            
+            <!-- コマ 1 (メイン画像) -->
+            <div class="storyboard-box" id="sb-box-1">
+              <div class="storyboard-box-header">
+                <span>カット 1 [メイン画像]</span>
+              </div>
+              <div class="storyboard-upload-area" id="sb-upload-1" onclick="triggerRowFile(1)">
+                <input type="file" id="sb-file-1" accept="image/*" class="hidden" onchange="handleRowFile(this, 1)">
+                <img id="sb-img-1" class="hidden" alt="メイン画像">
+                <div id="sb-placeholder-1" class="placeholder-text">
+                  <span>📷 タップしてメイン画像を追加</span>
+                </div>
+                <button type="button" id="sb-del-1" class="btn-delete-img hidden" onclick="deleteRowImage(1); event.stopPropagation();">❌</button>
+              </div>
+              <div class="form-group" style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:var(--text-light)">構図・撮影メモ</label>
+                <textarea id="sb-memo-1" rows="2" placeholder="例: パンケーキを真上から撮影。自然光を当てる" style="font-size:0.8rem;" oninput="updatePreview()"></textarea>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:0.75rem; color:var(--text-light)">フィルターイメージ</label>
+                <div class="filter-chips" id="sb-chips-1">
+                  <!-- JSで生成 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- コマ 2 (サブ画像1) -->
+            <div class="storyboard-box" id="sb-box-2">
+              <div class="storyboard-box-header">
+                <span>カット 2 [サブ画像]</span>
+              </div>
+              <div class="storyboard-upload-area" id="sb-upload-2" onclick="triggerRowFile(2)">
+                <input type="file" id="sb-file-2" accept="image/*" class="hidden" onchange="handleRowFile(this, 2)">
+                <img id="sb-img-2" class="hidden" alt="サブ画像1">
+                <div id="sb-placeholder-2" class="placeholder-text">
+                  <span>📷 タップして画像を追加</span>
+                </div>
+                <button type="button" id="sb-del-2" class="btn-delete-img hidden" onclick="deleteRowImage(2); event.stopPropagation();">❌</button>
+              </div>
+              <div class="form-group" style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:var(--text-light)">構図・撮影メモ</label>
+                <textarea id="sb-memo-2" rows="2" placeholder="例: シロップをかけるシズル感のアップ" style="font-size:0.8rem;" oninput="updatePreview()"></textarea>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:0.75rem; color:var(--text-light)">フィルターイメージ</label>
+                <div class="filter-chips" id="sb-chips-2">
+                  <!-- JSで生成 -->
+                </div>
+              </div>
+            </div>
+
+            <!-- コマ 3 (サブ画像2) -->
+            <div class="storyboard-box" id="sb-box-3">
+              <div class="storyboard-box-header">
+                <span>カット 3 [サブ画像]</span>
+              </div>
+              <div class="storyboard-upload-area" id="sb-upload-3" onclick="triggerRowFile(3)">
+                <input type="file" id="sb-file-3" accept="image/*" class="hidden" onchange="handleRowFile(this, 3)">
+                <img id="sb-img-3" class="hidden" alt="サブ画像2">
+                <div id="sb-placeholder-3" class="placeholder-text">
+                  <span>📷 タップして画像を追加</span>
+                </div>
+                <button type="button" id="sb-del-3" class="btn-delete-img hidden" onclick="deleteRowImage(3); event.stopPropagation();">❌</button>
+              </div>
+              <div class="form-group" style="margin-bottom:8px;">
+                <label style="font-size:0.75rem; color:var(--text-light)">構図・撮影メモ</label>
+                <textarea id="sb-memo-3" rows="2" placeholder="例: 限定パッケージのアップ" style="font-size:0.8rem;" oninput="updatePreview()"></textarea>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label style="font-size:0.75rem; color:var(--text-light)">フィルターイメージ</label>
+                <div class="filter-chips" id="sb-chips-3">
+                  <!-- JSで生成 -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 字コンテ入力 -->
+        <div class="form-group">
+          <label for="post-title">タイトル・見出しワード</label>
+          <input type="text" id="post-title" placeholder="例: 新スフレパンケーキ登場！" oninput="updatePreview()">
+        </div>
+
+        <div class="form-group">
+          <label for="caption">キャプション本文</label>
+          <textarea id="caption" rows="4" maxlength="140" placeholder="例: 明日からいちごパンケーキがスタートします🍓" oninput="updateCharCount()"></textarea>
+          <div class="caption-footer">
+            <div class="char-counter-container">
+              <svg class="progress-ring" width="20" height="20">
+                <circle class="progress-ring__circle" stroke="#FF7B90" stroke-width="2.5" fill="transparent" r="7" cx="10" cy="10"/>
+              </svg>
+              <span><span id="char-count">0</span> / 140 文字</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="hashtag-input">ハッシュタグ</label>
+          <input type="text" id="hashtag-input" placeholder="入力してEnterで追加 (例: #カフェ)">
+          <div id="tags-container" class="tag-badge-container"></div>
+        </div>
+
+        <div class="form-group">
+          <label>SNS導線チェック</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="sns-check" value="プロフィール誘導" checked>
+              <span>プロフィール誘導</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="sns-check" value="ストーリーズ連動">
+              <span>ストーリーズ連動</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="sns-check" value="フォロー促進" checked>
+              <span>フォロー促進</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="sns-check" value="位置情報タグ設定" checked>
+              <span>位置情報タグ設定</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="memo">オーナーへのひとこと (補足メモ)</label>
+          <textarea id="memo" rows="2" placeholder="特記する連絡事項があれば入力してください。"></textarea>
+        </div>
+
+        <!-- アクションボタン -->
+        <div id="editor-actions">
+          <button class="btn" onclick="submitPost()">
+            📤 投稿案を提出する
+          </button>
+          <button class="btn btn-secondary" onclick="resetForm()">
+            リセット
+          </button>
+        </div>
+        
+        <div id="correction-actions" class="hidden" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 10px;">
+          <button class="btn" style="background-color: var(--success);" onclick="submitPost(true)">
+            ✅ 修正を完了して再提出
+          </button>
+          <button class="btn btn-secondary" style="margin-top:0;" onclick="cancelCorrection()">
+            キャンセル
+          </button>
+        </div>
+      </div>
+
+      <!-- 履歴リストカード -->
+      <div id="staff-history-card" class="card hidden">
+        <h2>あなたの提出履歴</h2>
+        <div id="staff-history-list" class="history-list">
+          <!-- JSで描画 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 右カラム: Instagramプレビュー -->
+    <div class="right-section">
+      <div class="sticky-preview">
+        <h3>📱 Instagram 投稿プレビュー</h3>
+        <div class="instagram-mockup">
+          <div class="mockup-header">
+            <div class="mockup-avatar">☕</div>
+            <div class="mockup-user-info">
+              <span class="mockup-username">fuwamingo_cafe</span>
+              <span class="mockup-location">ふわみんごカフェ</span>
+            </div>
+            <span class="mockup-dots">•••</span>
+          </div>
+          
+          <div class="mockup-image-area" id="mockup-img-area">
+            <button class="carousel-control prev" onclick="navigateCarousel(-1)">◀</button>
+            <button class="carousel-control next" onclick="navigateCarousel(1)">▶</button>
+            
+            <div class="mockup-image-placeholder" id="mockup-placeholder">
+              <span class="icon">📷</span>
+              <span>画像がありません</span>
+            </div>
+            <img id="mockup-img" class="hidden" alt="プレビュー">
+            
+            <div id="mockup-indicators" class="carousel-indicators"></div>
+          </div>
+          
+          <div class="mockup-action-bar">
+            <span>♡</span>
+            <span>💬</span>
+            <span>✉️</span>
+            <span class="bookmark-icon">📥</span>
+          </div>
+          <div class="mockup-likes">「いいね！」124件</div>
+          <div class="mockup-caption-area">
+            <span class="mockup-caption-username">fuwamingo_cafe</span>
+            <span class="mockup-caption-text" id="mockup-text">-</span>
+            <span class="mockup-hashtags" id="mockup-tags"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== オーナー画面 ==================== -->
+  <div id="owner-view" class="hidden">
+    
+    <!-- オーナー画面ロック用パスワードパネル -->
+    <div id="owner-auth-panel" class="card owner-auth-container">
+      <span style="font-size:3rem; display:block; margin-bottom:10px;">🔒</span>
+      <h2>オーナー認証</h2>
+      <p style="font-size:0.8rem; color:var(--text-light); margin-bottom:20px;">
+        オーナー画面を利用するには、管理者パスワードを入力してください。
+      </p>
+      
+      <div class="form-group" style="text-align:left;">
+        <label for="owner-auth-pass">パスワード</label>
+        <input type="password" id="owner-auth-pass" placeholder="••••••••" style="text-align:center;">
+        <p id="owner-auth-error" class="hidden" style="color:var(--danger); font-size:0.8rem; font-weight:700; margin-top:8px; text-align:center;"></p>
+      </div>
+      
+      <button class="btn" style="background-color: var(--secondary);" onclick="checkOwnerPassword()">
+        🔑 ロック解除
+      </button>
+    </div>
+
+    <!-- オーナー画面本体 (パスワード認証後に表示) -->
+    <div id="owner-main-content" class="hidden">
+      <!-- 統計値 -->
+      <div class="stats">
+        <div class="stat-card total">
+          <div class="stat-label">総提出数</div>
+          <div class="stat-num" id="stat-total">0</div>
+        </div>
+        <div class="stat-card pending">
+          <div class="stat-label">レビュー待ち</div>
+          <div class="stat-num" id="stat-pending">0</div>
+        </div>
+        <div class="stat-card approved">
+          <div class="stat-label">承認済み</div>
+          <div class="stat-num" id="stat-approved">0</div>
+        </div>
+      </div>
+
+      <!-- スケジュールカレンダー -->
+      <div class="card calendar-card">
+        <div class="calendar-header">
+          <h2>📅 投稿スケジュール</h2>
+          <div>
+            <button class="calendar-nav-btn" onclick="navigateMonth(-1)">◀</button>
+            <span id="calendar-month-year" style="font-weight: 700; margin: 0 10px;">-</span>
+            <button class="calendar-nav-btn" onclick="navigateMonth(1)">▶</button>
+          </div>
+        </div>
+        <div class="calendar-grid" id="calendar-grid">
+          <!-- JSで動的描画 -->
+        </div>
+      </div>
+
+      <div class="view-grid">
+        <!-- 左カラム: 提出一覧 -->
+        <div class="left-section">
+          <div class="card">
+            <div class="list-header">
+              <h2>提出案件一覧</h2>
+              <div class="filter-group">
+                <select id="status-filter" onchange="renderDashboard()">
+                  <option value="all">すべて表示</option>
+                  <option value="pending">レビュー待ち</option>
+                  <option value="approved">承認済み</option>
+                  <option value="rejected">差し戻し</option>
+                </select>
+              </div>
+            </div>
+            <div id="submission-list" class="history-list">
+              <!-- JSで描画 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 右カラム: レビューパネル -->
+        <div class="right-section">
+          <!-- レビューカード -->
+          <div class="card hidden" id="review-panel">
+            <h2>詳細レビュー & 承認</h2>
+            
+            <div class="review-grid">
+              <!-- 左: 字コンテやステータス情報 -->
+              <div class="review-info-section">
+                <div class="review-info-row">
+                  <strong>担当スタッフ</strong>
+                  <span id="rev-staff">-</span>
+                </div>
+                <div class="review-info-row">
+                  <strong>投稿希望日</strong>
+                  <span id="rev-date">-</span>
+                </div>
+                <div class="review-info-row">
+                  <strong>テーマ</strong>
+                  <span id="rev-theme" class="chip-theme">-</span>
+                </div>
+                <div class="review-info-row">
+                  <strong>タイトル・見出し</strong>
+                  <span id="rev-title">-</span>
+                </div>
+                <div class="review-info-row">
+                  <strong>キャプション本文</strong>
+                  <p id="rev-caption" style="font-size:0.85rem; white-space:pre-wrap; background:#fbfbfb; padding:8px; border-radius:6px; border:1px solid var(--border);">-</p>
+                </div>
+                <div class="review-info-row">
+                  <strong>ハッシュタグ</strong>
+                  <span id="rev-tags" style="color:#00376B; font-size:0.85rem;">-</span>
+                </div>
+                <div class="review-info-row">
+                  <strong>SNS導線チェック</strong>
+                  <p id="rev-sns-checks" style="margin-top:4px;">-</p>
+                </div>
+                <div class="review-info-row">
+                  <strong>補足メモ</strong>
+                  <p id="rev-memo" style="font-size:0.8rem; color:var(--text-light);">-</p>
+                </div>
+              </div>
+
+              <!-- 右: カルーセルプレビュー -->
+              <div>
+                <h3>掲載イメージ</h3>
+                <div class="instagram-mockup" style="border-width:6px; max-width:240px; box-shadow:var(--shadow-sm); margin: 0 auto;">
+                  <div class="mockup-header" style="padding:6px 8px; font-size:0.7rem;">
+                    <div class="mockup-avatar" style="width:20px; height:20px; font-size:0.6rem;">☕</div>
+                    <span class="mockup-username">fuwamingo_cafe</span>
+                  </div>
+                  <div class="mockup-image-area" id="rev-mockup-img-area">
+                    <button class="carousel-control prev" style="width:20px; height:20px; font-size:0.5rem;" onclick="navigateRevCarousel(-1)">◀</button>
+                    <button class="carousel-control next" style="width:20px; height:20px; font-size:0.5rem;" onclick="navigateRevCarousel(1)">▶</button>
+                    <img id="rev-img" alt="プレビュー">
+                    <div id="rev-mockup-indicators" class="carousel-indicators"></div>
+                  </div>
+                  <div class="mockup-caption-area" style="padding:8px; font-size:0.7rem;">
+                    <span class="mockup-caption-text" id="rev-mockup-text"></span>
+                    <span class="mockup-hashtags" id="rev-mockup-tags"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 絵コンテ全体タイムライン (画像, 撮影メモ, フィルター) -->
+            <div style="margin-top:20px;">
+              <h3>🎬 絵コンテ確認 (全画像)</h3>
+              <div id="owner-storyboard-timeline" class="owner-storyboard-timeline">
+                <!-- JSで描画 -->
+              </div>
+            </div>
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
+
+            <!-- フィードバックコメント -->
+            <div class="form-group" id="feedback-field-container">
+              <label for="feedback-comment">フィードバックコメント (差し戻し時に必須)</label>
+              <textarea id="feedback-comment" rows="2" placeholder="差し戻し理由や承認時のメモを入力してください。"></textarea>
+            </div>
+
+            <!-- アクション -->
+            <div id="review-actions-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <button class="btn" style="background-color: var(--success);" onclick="updateStatus('approved')">
+                ✅ 承認する
+              </button>
+              <button class="btn" style="background-color: var(--danger);" onclick="updateStatus('rejected')">
+                ❌ 差し戻す
+              </button>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="closeReview()">
+              ◀ 一覧へ戻る
+            </button>
+          </div>
+
+          <div id="review-placeholder-card" class="card empty-state">
+            <span class="icon">📋</span>
+            <h3>詳細レビュー</h3>
+            <p>左の一覧から投稿案を選択すると、ここに詳細レビューが表示されます。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== アプリケーションロジック (JavaScript) ==================== -->
+<script>
+  /*
+   * ==========================================
+   * ☕ CAFÉ SNS Instagram 投稿管理アプリ ロジック
+   * 
+   * [データ保存に関する重要事項]
+   * 企画書 v1.0 の仕様に基づき、本アプリは localStorage を使用せず、
+   * 完全にブラウザ内のグローバル変数(メモリ)のみでデータを保存・管理しています。
+   * ページを閉じたりリロードすると、変更内容はリセットされます。
+   * ==========================================
+   */
+
+  // メモリストレージ
+  let submissions = [];
+  let currentTags = [];
+  let currentEditingSubmissionId = null;
+  let currentReviewId = null;
+
+  // セキュリティ・管理者ロック状態
+  let isOwnerAuthenticated = false;
+  const OWNER_PASS = "owner123"; // 管理者パスワード (答えは画面上に表示させません)
+
+  // カルーセルインデックス
+  let currentCarouselIndex = 0;
+  let currentRevCarouselIndex = 0;
+
+  // 動的カレンダー状態
+  let calendarYear = 2026;
+  let calendarMonth = 5; // 0-indexed (5 = 6月)
+
+  // フィルターチップの選択肢
+  const filterOptions = ["明るめ", "ナチュラル", "あたたかい", "くっきり"];
+
+  // 読み込み完了時の処理
+  window.addEventListener('DOMContentLoaded', () => {
+    // 日付の初期値を本日に設定
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('post-date').value = `${yyyy}-${mm}-${dd}`;
+    
+    // カレンダーの初期表示年月も現在にする
+    calendarYear = today.getFullYear();
+    calendarMonth = today.getMonth();
+
+    initFilterChips();
+    initDemoData();
+    switchView('staff');
+    
+    // パスワード入力フィールドのEnterキー対応
+    document.getElementById('owner-auth-pass').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        checkOwnerPassword();
+      }
+    });
+  });
+
+  // 各コマのフィルターイメージ用チップを生成
+  function initFilterChips() {
+    [1, 2, 3].forEach(idx => {
+      const container = document.getElementById(`sb-chips-${idx}`);
+      container.innerHTML = '';
+      filterOptions.forEach((opt, optIdx) => {
+        const label = document.createElement('label');
+        label.className = 'filter-chip-label';
+        
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `filter-${idx}`;
+        input.value = opt;
+        if (optIdx === 0) input.checked = true; // デフォルトは「明るめ」
+        input.onchange = () => updatePreview();
+        
+        const span = document.createElement('span');
+        span.textContent = opt;
+        
+        label.appendChild(input);
+        label.appendChild(span);
+        container.appendChild(label);
+      });
+    });
+  }
+
+  // 軽量なダミー画像用インラインSVG (Base64)
+  const dummySvgDataUri = `data:image/svg+xml;charset=utf-8,` + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+      <rect width="300" height="300" fill="#F5EFEB"/>
+      <circle cx="150" cy="140" r="40" fill="#FFB3BF"/>
+      <path d="M120,200 C120,180 180,180 180,200 Z" fill="#8E7365"/>
+      <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8E7365">🍰 ふわみんごカフェ</text>
+    </svg>`
+  );
+
+  // デモ用初期データ
+  function initDemoData() {
+    const today = new Date();
+    const formatDate = (offset) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() + offset);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    submissions = [
+      {
+        id: 100001,
+        staff: "佐々木",
+        date: formatDate(3),
+        theme: "新メニュー",
+        title: "ふわふわスフレパンケーキ🍓",
+        caption: "口の中でとろけるスフレパンケーキが新登場！たっぷりのいちごソースと一緒にどうぞ。",
+        tags: ["#新メニュー", "#スフレパンケーキ", "#ふわみんごカフェ"],
+        snsChecks: ["プロフィール誘導", "位置情報タグ設定", "フォロー促進"],
+        memo: "シズル感が伝わるように撮影しました。1コマ目を大きく見せたいです。",
+        status: "pending",
+        feedback: "",
+        cuts: [
+          { image: dummySvgDataUri, memo: "メイン：パンケーキを真上から自然光で", filter: "明るめ" },
+          { image: dummySvgDataUri, memo: "サブ1：シロップをかけるアップ", filter: "あたたかい" },
+          { image: "", memo: "サブ2：店舗の看板と雰囲気", filter: "ナチュラル" }
+        ]
+      },
+      {
+        id: 100002,
+        staff: "田中",
+        date: formatDate(0),
+        theme: "季節イベント",
+        title: "初夏のいちごフェア🍓",
+        caption: "いちごフェア開催！限定パフェやスムージーをたくさん用意しております。",
+        tags: ["#いちごフェア", "#限定スイーツ", "#カフェ部"],
+        snsChecks: ["プロフィール誘導", "ストーリーズ連動", "位置情報タグ設定", "フォロー促進"],
+        memo: "フェア開始のアナウンス用です。",
+        status: "approved",
+        feedback: "写真のトーンがフェアに合っていて素晴らしいです！承認します。",
+        cuts: [
+          { image: dummySvgDataUri, memo: "メイン：いちごパフェのアップ", filter: "明るめ" },
+          { image: "", memo: "", filter: "ナチュラル" },
+          { image: "", memo: "", filter: "ナチュラル" }
+        ]
+      },
+      {
+        id: 100003,
+        staff: "山田",
+        date: formatDate(5),
+        theme: "スタッフ紹介",
+        title: "新しいバリスタの紹介☕",
+        caption: "新メンバーのルイ君です！美味しいラテを入れてお待ちしております。",
+        tags: ["#スタッフ紹介", "#バリスタ", "#ラテアート"],
+        snsChecks: ["プロフィール誘導", "フォロー促進"],
+        memo: "ルイ君のラテアート写真を載せたいです。",
+        status: "rejected",
+        feedback: "ラテアートの画像が登録されていないため、仮画像でもいいので設定した状態で提出してください。",
+        cuts: [
+          { image: "", memo: "ルイ君のラテアート写真", filter: "くっきり" },
+          { image: "", memo: "", filter: "ナチュラル" },
+          { image: "", memo: "", filter: "ナチュラル" }
+        ]
+      }
+    ];
+  }
+
+  // ==================== 操作者とビューの制御 ====================
+
+  function handleUserChange() {
+    const select = document.getElementById('current-user-select');
+    const val = select.value;
+    
+    // リセット処理
+    resetForm();
+    cancelCorrection();
+
+    if (val.startsWith('staff:')) {
+      // スタッフに切り替えた場合は、オーナー認証状態を解除する
+      isOwnerAuthenticated = false;
+      document.getElementById('owner-auth-pass').value = '';
+      document.getElementById('owner-auth-error').classList.add('hidden');
+      
+      switchView('staff');
+    } else if (val === 'owner') {
+      switchView('owner');
+    }
+  }
+
+  function getActiveUser() {
+    const select = document.getElementById('current-user-select');
+    const val = select.value;
+    if (val.startsWith('staff:')) {
+      return { role: 'staff', name: val.split(':')[1] };
+    }
+    return { role: 'owner', name: 'オーナー' };
+  }
+
+  function switchView(view) {
+    const tabStaffBtn = document.getElementById('tab-staff-btn');
+    const tabOwnerBtn = document.getElementById('tab-owner-btn');
+    const selectUser = document.getElementById('current-user-select');
+    
+    tabStaffBtn.classList.remove('active');
+    tabOwnerBtn.classList.remove('active');
+    
+    if (view === 'staff') {
+      tabStaffBtn.classList.add('active');
+      document.getElementById('staff-view').classList.remove('hidden');
+      document.getElementById('owner-view').classList.add('hidden');
+      
+      // ドロップダウンの表示もスタッフに合わせる (オーナーからの切り替え時の同期)
+      const user = getActiveUser();
+      if (user.role !== 'staff') {
+        selectUser.value = 'staff:佐々木';
+      }
+      
+      switchStaffSubTab('create');
+      updateStaffRevBadge();
+    } else {
+      tabOwnerBtn.classList.add('active');
+      document.getElementById('staff-view').classList.add('hidden');
+      document.getElementById('owner-view').classList.remove('hidden');
+      
+      // ドロップダウンをオーナーに同期
+      selectUser.value = 'owner';
+
+      // オーナー画面のパスワードロック判定
+      if (!isOwnerAuthenticated) {
+        document.getElementById('owner-auth-panel').classList.remove('hidden');
+        document.getElementById('owner-main-content').classList.add('hidden');
+      } else {
+        document.getElementById('owner-auth-panel').classList.add('hidden');
+        document.getElementById('owner-main-content').classList.remove('hidden');
+        renderDashboard();
+        renderCalendar();
+        closeReview();
+      }
+    }
+  }
+
+  // オーナーパスワード確認
+  function checkOwnerPassword() {
+    const inputPass = document.getElementById('owner-auth-pass').value;
+    const errorEl = document.getElementById('owner-auth-error');
+    
+    if (inputPass === OWNER_PASS) {
+      isOwnerAuthenticated = true;
+      errorEl.classList.add('hidden');
+      
+      // ロック解除してオーナーメインコンテンツを表示
+      document.getElementById('owner-auth-panel').classList.add('hidden');
+      document.getElementById('owner-main-content').classList.remove('hidden');
+      
+      renderDashboard();
+      renderCalendar();
+      closeReview();
+    } else {
+      isOwnerAuthenticated = false;
+      errorEl.textContent = 'パスワードが正しくありません。入力し直してください。';
+      errorEl.classList.remove('hidden');
+    }
+  }
+
+  function switchStaffSubTab(tab) {
+    document.getElementById('subtab-create-btn').classList.remove('active');
+    document.getElementById('subtab-history-btn').classList.remove('active');
+    
+    if (tab === 'create') {
+      document.getElementById('subtab-create-btn').classList.add('active');
+      document.getElementById('staff-editor-card').classList.remove('hidden');
+      document.getElementById('staff-history-card').classList.add('hidden');
+      updatePreview();
+    } else {
+      document.getElementById('subtab-history-btn').classList.add('active');
+      document.getElementById('staff-editor-card').classList.add('hidden');
+      document.getElementById('staff-history-card').classList.remove('hidden');
+      renderStaffHistory();
+    }
+  }
+
+  function updateStaffRevBadge() {
+    const user = getActiveUser();
+    if (user.role !== 'staff') return;
+    const revCount = submissions.filter(s => s.staff === user.name && s.status === 'rejected').length;
+    const badge = document.getElementById('staff-rev-count-badge');
+    if (revCount > 0) {
+      badge.textContent = revCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  // ==================== スタッフ画面：入力制御 ====================
+
+  function triggerRowFile(idx) {
+    // 承認済み/レビュー待ちを履歴から開いて閲覧中の場合（読み取り専用）は動作しない
+    if (currentEditingSubmissionId !== null) {
+      const sub = submissions.find(s => s.id === currentEditingSubmissionId);
+      if (sub && sub.status !== 'rejected') return;
+    }
+    document.getElementById(`sb-file-${idx}`).click();
+  }
+
+  function handleRowFile(input, idx) {
+    const file = input.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = document.getElementById(`sb-img-${idx}`);
+        const ph = document.getElementById(`sb-placeholder-${idx}`);
+        const delBtn = document.getElementById(`sb-del-${idx}`);
+        
+        img.src = e.target.result;
+        img.classList.remove('hidden');
+        ph.classList.add('hidden');
+        delBtn.classList.remove('hidden');
+        
+        updatePreview();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function deleteRowImage(idx) {
+    const img = document.getElementById(`sb-img-${idx}`);
+    const ph = document.getElementById(`sb-placeholder-${idx}`);
+    const delBtn = document.getElementById(`sb-del-${idx}`);
+    const fileInput = document.getElementById(`sb-file-${idx}`);
+    
+    img.src = '';
+    img.classList.add('hidden');
+    ph.classList.remove('hidden');
+    delBtn.classList.add('hidden');
+    fileInput.value = '';
+    
+    updatePreview();
+  }
+
+  function addTagFromInput() {
+    const input = document.getElementById('hashtag-input');
+    let val = input.value.trim();
+    if (val) {
+      const tags = val.split(/\s+/);
+      tags.forEach(t => {
+        if (t) {
+          let tag = t.startsWith('#') ? t : '#' + t;
+          if (!currentTags.includes(tag)) {
+            currentTags.push(tag);
+          }
+        }
+      });
+      input.value = '';
+      renderTags();
+      updatePreview();
+    }
+  }
+
+  function renderTags() {
+    const container = document.getElementById('tags-container');
+    container.innerHTML = '';
+    currentTags.forEach((tag, idx) => {
+      const badge = document.createElement('div');
+      badge.className = 'tag-badge';
+      
+      const textSpan = document.createElement('span');
+      textSpan.textContent = tag;
+      
+      const delSpan = document.createElement('span');
+      delSpan.className = 'remove-tag';
+      delSpan.textContent = '×';
+      delSpan.onclick = () => removeTag(idx);
+      
+      badge.appendChild(textSpan);
+      badge.appendChild(delSpan);
+      container.appendChild(badge);
+    });
+  }
+
+  function removeTag(index) {
+    currentTags.splice(index, 1);
+    renderTags();
+    updatePreview();
+  }
+
+  function updateCharCount() {
+    const text = document.getElementById('caption').value;
+    const len = text.length;
+    document.getElementById('char-count').textContent = len;
+
+    const circle = document.querySelector('.progress-ring__circle');
+    const radius = circle.r.baseVal.value;
+    const circumference = radius * 2 * Math.PI;
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    const offset = circumference - (Math.min(len, 140) / 140) * circumference;
+    circle.style.strokeDashoffset = offset;
+
+    if (len >= 140) {
+      circle.setAttribute('stroke', 'var(--danger)');
+    } else if (len >= 120) {
+      circle.setAttribute('stroke', 'var(--warning)');
+    } else {
+      circle.setAttribute('stroke', 'var(--primary)');
+    }
+    updatePreview();
+  }
+
+  // 3枚の絵コンテデータを収集
+  function collectStoryboardCuts() {
+    const cuts = [];
+    [1, 2, 3].forEach(idx => {
+      const img = document.getElementById(`sb-img-${idx}`).src;
+      const memo = document.getElementById(`sb-memo-${idx}`).value;
+      const filterRadio = document.querySelector(`input[name="filter-${idx}"]:checked`);
+      const filter = filterRadio ? filterRadio.value : 'ナチュラル';
+      cuts.push({
+        image: img.startsWith('data:') ? img : '',
+        memo: memo,
+        filter: filter
+      });
+    });
+    return cuts;
+  }
+
+  // ==================== スタッフ用：カルーセルプレビュー ====================
+
+  function navigateCarousel(dir) {
+    const cuts = collectStoryboardCuts();
+    const activeCuts = cuts.filter(c => c.image !== '');
+    if (activeCuts.length <= 1) return;
+
+    currentCarouselIndex += dir;
+    if (currentCarouselIndex >= activeCuts.length) {
+      currentCarouselIndex = 0;
+    } else if (currentCarouselIndex < 0) {
+      currentCarouselIndex = activeCuts.length - 1;
+    }
+    renderCarouselImage(activeCuts, currentCarouselIndex, 'mockup-img', 'mockup-placeholder', 'mockup-indicators');
+  }
+
+  function renderCarouselImage(activeCuts, index, imgId, placeholderId, indicatorsId) {
+    const imgEl = document.getElementById(imgId);
+    const placeholderEl = document.getElementById(placeholderId);
+    const indContainer = document.getElementById(indicatorsId);
+
+    indContainer.innerHTML = '';
+    if (activeCuts.length > 1) {
+      activeCuts.forEach((_, idx) => {
+        const dot = document.createElement('span');
+        dot.className = `carousel-dot ${idx === index ? 'active' : ''}`;
+        dot.onclick = () => {
+          if (imgId === 'mockup-img') {
+            currentCarouselIndex = idx;
+            renderCarouselImage(activeCuts, currentCarouselIndex, imgId, placeholderId, indicatorsId);
+          } else {
+            currentRevCarouselIndex = idx;
+            renderCarouselImage(activeCuts, currentRevCarouselIndex, imgId, placeholderId, indicatorsId);
+          }
+        };
+        indContainer.appendChild(dot);
+      });
+    }
+
+    const cut = activeCuts[index];
+    if (cut && cut.image) {
+      placeholderEl.classList.add('hidden');
+      imgEl.src = cut.image;
+      imgEl.classList.remove('hidden');
+    } else {
+      placeholderEl.classList.remove('hidden');
+      imgEl.classList.add('hidden');
+      imgEl.src = '';
+    }
+  }
+
+  function updatePreview() {
+    const cuts = collectStoryboardCuts();
+    const activeCuts = cuts.filter(c => c.image !== '');
+
+    const prevBtn = document.querySelector('#staff-view .carousel-control.prev');
+    const nextBtn = document.querySelector('#staff-view .carousel-control.next');
+    if (activeCuts.length <= 1) {
+      prevBtn.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+    } else {
+      prevBtn.classList.remove('hidden');
+      nextBtn.classList.remove('hidden');
+    }
+
+    if (currentCarouselIndex >= activeCuts.length) {
+      currentCarouselIndex = 0;
+    }
+    renderCarouselImage(activeCuts, currentCarouselIndex, 'mockup-img', 'mockup-placeholder', 'mockup-indicators');
+
+    // キャプション本文の組み立て
+    const title = document.getElementById('post-title').value.trim();
+    const caption = document.getElementById('caption').value;
+    const themeObj = document.querySelector('input[name="theme"]:checked');
+    const theme = themeObj ? themeObj.value : '';
+
+    let textVal = '';
+    if (theme) textVal += `【${theme}】`;
+    if (title) textVal += (theme ? ' ' : '') + title + '\n\n';
+    textVal += caption;
+
+    document.getElementById('mockup-text').textContent = textVal || 'キャプション内容がここに表示されます。';
+    document.getElementById('mockup-tags').textContent = currentTags.join(' ');
+  }
+
+  // ==================== スタッフ用：提出と履歴 ====================
+
+  function submitPost(isCorrection = false) {
+    const user = getActiveUser();
+    if (user.role !== 'staff') return;
+
+    const postDate = document.getElementById('post-date').value;
+    if (!postDate) {
+      alert('投稿希望日を選択してください。');
+      return;
+    }
+
+    const themeObj = document.querySelector('input[name="theme"]:checked');
+    const theme = themeObj ? themeObj.value : 'その他';
+
+    const title = document.getElementById('post-title').value.trim();
+    const caption = document.getElementById('caption').value;
+    const memo = document.getElementById('memo').value.trim();
+
+    const cuts = collectStoryboardCuts();
+    if (!cuts[0].image) {
+      alert('カット1（メイン画像）を設定してください。');
+      return;
+    }
+
+    const snsChecks = [];
+    document.querySelectorAll('.sns-check:checked').forEach(cb => {
+      snsChecks.push(cb.value);
+    });
+
+    if (isCorrection && currentEditingSubmissionId !== null) {
+      const subIdx = submissions.findIndex(s => s.id === currentEditingSubmissionId);
+      if (subIdx !== -1) {
+        submissions[subIdx].date = postDate;
+        submissions[subIdx].theme = theme;
+        submissions[subIdx].title = title;
+        submissions[subIdx].caption = caption;
+        submissions[subIdx].tags = [...currentTags];
+        submissions[subIdx].snsChecks = snsChecks;
+        submissions[subIdx].cuts = cuts;
+        submissions[subIdx].memo = memo;
+        submissions[subIdx].status = 'pending';
+        submissions[subIdx].feedback = ''; // 指示クリア
+        
+        triggerConfetti();
+        alert('投稿案を修正して再提出しました。');
+      }
+    } else {
+      const newPost = {
+        id: Date.now(),
+        staff: user.name,
+        date: postDate,
+        theme: theme,
+        title: title,
+        caption: caption,
+        tags: [...currentTags],
+        snsChecks: snsChecks,
+        cuts: cuts,
+        memo: memo,
+        status: 'pending',
+        feedback: ''
+      };
+      submissions.push(newPost);
+      triggerConfetti();
+      alert('投稿案を新しく提出しました。');
+    }
+
+    resetForm();
+    cancelCorrection();
+    updateStaffRevBadge();
+    switchStaffSubTab('history');
+  }
+
+  function resetForm() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('post-date').value = `${yyyy}-${mm}-${dd}`;
+
+    const themes = document.querySelectorAll('input[name="theme"]');
+    if (themes.length > 0) themes[0].checked = true;
+
+    [1, 2, 3].forEach(idx => {
+      deleteRowImage(idx);
+      document.getElementById(`sb-memo-${idx}`).value = '';
+      
+      const filterRadio = document.querySelector(`input[name="filter-${idx}"][value="明るめ"]`);
+      if (filterRadio) filterRadio.checked = true;
+    });
+
+    document.getElementById('post-title').value = '';
+    document.getElementById('caption').value = '';
+    currentTags = [];
+    renderTags();
+
+    document.querySelectorAll('.sns-check').forEach(cb => {
+      cb.checked = cb.value === 'プロフィール誘導' || cb.value === '位置情報タグ設定' || cb.value === 'フォロー促進';
+    });
+
+    document.getElementById('memo').value = '';
+    
+    // 入力制限の解除
+    toggleFormReadonly(false);
+
+    updateCharCount();
+    updatePreview();
+  }
+
+  function toggleFormReadonly(readonly) {
+    const elements = [
+      document.getElementById('post-date'),
+      document.getElementById('post-title'),
+      document.getElementById('caption'),
+      document.getElementById('hashtag-input'),
+      document.getElementById('memo')
+    ];
+    
+    elements.forEach(el => {
+      if (readonly) el.setAttribute('readonly', 'true');
+      else el.removeAttribute('readonly');
+    });
+
+    document.querySelectorAll('input[name="theme"]').forEach(r => r.disabled = readonly);
+    document.querySelectorAll('.sns-check').forEach(c => c.disabled = readonly);
+    
+    [1, 2, 3].forEach(idx => {
+      document.getElementById(`sb-memo-${idx}`).disabled = readonly;
+      document.querySelectorAll(`input[name="filter-${idx}"]`).forEach(r => r.disabled = readonly);
+    });
+
+    [1, 2, 3].forEach(idx => {
+      const delBtn = document.getElementById(`sb-del-${idx}`);
+      if (readonly) delBtn.classList.add('hidden');
+      else {
+        const img = document.getElementById(`sb-img-${idx}`);
+        if (img.src && !img.classList.contains('hidden')) delBtn.classList.remove('hidden');
+      }
+    });
+  }
+
+  function renderStaffHistory() {
+    const user = getActiveUser();
+    if (user.role !== 'staff') return;
+
+    const list = document.getElementById('staff-history-list');
+    list.innerHTML = '';
+
+    const mySubs = submissions.filter(s => s.staff === user.name);
+    mySubs.sort((a, b) => b.id - a.id);
+
+    if (mySubs.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <span class="icon">📁</span>
+          <p>提出済みの案件はありません。</p>
+        </div>
+      `;
+      return;
+    }
+
+    mySubs.forEach(sub => {
+      const item = document.createElement('div');
+      item.className = `history-item ${sub.status === 'rejected' ? 'rejected' : ''}`;
+      
+      const thumbUrl = (sub.cuts && sub.cuts[0] && sub.cuts[0].image) ? sub.cuts[0].image : dummySvgDataUri;
+      
+      const leftDiv = document.createElement('div');
+      leftDiv.className = 'history-item-left';
+      
+      const img = document.createElement('img');
+      img.className = 'history-item-thumb';
+      img.src = thumbUrl;
+      
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'history-item-info';
+      
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'history-item-title';
+      titleSpan.textContent = sub.title || 'タイトルなし';
+      
+      const metaSpan = document.createElement('span');
+      metaSpan.className = 'history-item-meta';
+      metaSpan.textContent = `希望日: ${sub.date} | テーマ: ${sub.theme}`;
+
+      infoDiv.appendChild(titleSpan);
+      infoDiv.appendChild(metaSpan);
+      leftDiv.appendChild(img);
+      leftDiv.appendChild(infoDiv);
+
+      const rightDiv = document.createElement('div');
+      rightDiv.style.textAlign = 'right';
+      
+      const badge = document.createElement('span');
+      const statusJp = sub.status === 'pending' ? 'レビュー待ち' : sub.status === 'approved' ? '承認済み' : '差し戻し';
+      badge.className = `badge ${sub.status}`;
+      badge.textContent = statusJp;
+      rightDiv.appendChild(badge);
+
+      if (sub.status === 'rejected') {
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn';
+        editBtn.style.padding = '4px 8px';
+        editBtn.style.fontSize = '0.75rem';
+        editBtn.style.width = 'auto';
+        editBtn.style.minHeight = '30px';
+        editBtn.style.marginTop = '6px';
+        editBtn.style.boxShadow = 'none';
+        editBtn.textContent = '修正する';
+        editBtn.onclick = (e) => {
+          e.stopPropagation();
+          loadSubmissionToEditor(sub.id);
+        };
+        rightDiv.appendChild(editBtn);
+      }
+
+      item.appendChild(leftDiv);
+      item.appendChild(rightDiv);
+
+      item.onclick = () => {
+        loadSubmissionToEditor(sub.id, sub.status !== 'rejected');
+      };
+
+      list.appendChild(item);
+    });
+  }
+
+  function loadSubmissionToEditor(id, readonly = false) {
+    const sub = submissions.find(s => s.id === id);
+    if (!sub) return;
+
+    switchStaffSubTab('create');
+    currentEditingSubmissionId = sub.id;
+
+    document.getElementById('post-date').value = sub.date;
+    
+    const themeRadio = document.querySelector(`input[name="theme"][value="${sub.theme}"]`);
+    if (themeRadio) themeRadio.checked = true;
+
+    [1, 2, 3].forEach((idx) => {
+      const cut = sub.cuts[idx - 1];
+      const img = document.getElementById(`sb-img-${idx}`);
+      const ph = document.getElementById(`sb-placeholder-${idx}`);
+      const delBtn = document.getElementById(`sb-del-${idx}`);
+      
+      if (cut && cut.image) {
+        img.src = cut.image;
+        img.classList.remove('hidden');
+        ph.classList.add('hidden');
+        if (!readonly) delBtn.classList.remove('hidden');
+      } else {
+        img.src = '';
+        img.classList.add('hidden');
+        ph.classList.remove('hidden');
+        delBtn.classList.add('hidden');
+      }
+
+      document.getElementById(`sb-memo-${idx}`).value = cut ? cut.memo : '';
+      
+      const filterRadio = document.querySelector(`input[name="filter-${idx}"][value="${cut ? cut.filter : '明るめ'}"]`);
+      if (filterRadio) filterRadio.checked = true;
+    });
+
+    document.getElementById('post-title').value = sub.title || '';
+    document.getElementById('caption').value = sub.caption || '';
+    
+    currentTags = [...sub.tags];
+    renderTags();
+
+    document.querySelectorAll('.sns-check').forEach(cb => {
+      cb.checked = sub.snsChecks ? sub.snsChecks.includes(cb.value) : false;
+    });
+
+    document.getElementById('memo').value = sub.memo || '';
+
+    // 差し戻し時の警告通知
+    const notice = document.getElementById('revision-feedback-notice');
+    if (sub.status === 'rejected') {
+      document.getElementById('revision-feedback-text').textContent = sub.feedback;
+      notice.classList.remove('hidden');
+      document.getElementById('editor-title').textContent = '差し戻し投稿案の修正';
+      
+      document.getElementById('editor-actions').classList.add('hidden');
+      document.getElementById('correction-actions').classList.remove('hidden');
+    } else {
+      notice.classList.add('hidden');
+      document.getElementById('editor-title').textContent = `投稿案の確認 (${sub.status === 'approved' ? '承認済み' : 'レビュー待ち'})`;
+      
+      document.getElementById('editor-actions').classList.add('hidden');
+      
+      const corrActions = document.getElementById('correction-actions');
+      corrActions.classList.remove('hidden');
+      corrActions.querySelector('.btn').classList.add('hidden'); // 再提出ボタン非表示
+    }
+
+    toggleFormReadonly(readonly);
+    updateCharCount();
+    updatePreview();
+  }
+
+  function cancelCorrection() {
+    currentEditingSubmissionId = null;
+    resetForm();
+    
+    document.getElementById('editor-title').textContent = '新規投稿案の作成';
+    document.getElementById('editor-actions').classList.remove('hidden');
+    document.getElementById('correction-actions').classList.add('hidden');
+    document.getElementById('correction-actions').querySelector('.btn').classList.remove('hidden'); // 再表示
+    document.getElementById('revision-feedback-notice').classList.add('hidden');
+    
+    switchStaffSubTab('history');
+  }
+
+  // ==================== オーナー画面：ダッシュボードとカレンダー ====================
+
+  function renderDashboard() {
+    const total = submissions.length;
+    const pending = submissions.filter(s => s.status === 'pending').length;
+    const approved = submissions.filter(s => s.status === 'approved').length;
+
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-pending').textContent = pending;
+    document.getElementById('stat-approved').textContent = approved;
+
+    const filterVal = document.getElementById('status-filter').value;
+    const list = document.getElementById('submission-list');
+    list.innerHTML = '';
+
+    let filtered = submissions;
+    if (filterVal !== 'all') {
+      filtered = submissions.filter(s => s.status === filterVal);
+    }
+
+    filtered.sort((a, b) => b.id - a.id);
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <span class="icon">📁</span>
+          <p>該当する投稿案はありません。</p>
+        </div>
+      `;
+      return;
+    }
+
+    filtered.forEach(sub => {
+      const item = document.createElement('div');
+      item.className = `list-item ${currentReviewId === sub.id ? 'active' : ''}`;
+      
+      const thumbUrl = (sub.cuts && sub.cuts[0] && sub.cuts[0].image) ? sub.cuts[0].image : dummySvgDataUri;
+      
+      const leftDiv = document.createElement('div');
+      leftDiv.className = 'list-item-left';
+      
+      const img = document.createElement('img');
+      img.className = 'list-item-thumb';
+      img.src = thumbUrl;
+      
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'list-item-info';
+      
+      const staffSpan = document.createElement('span');
+      staffSpan.className = 'list-item-staff';
+      staffSpan.textContent = `${sub.staff} (${sub.theme})`;
+      
+      const metaSpan = document.createElement('span');
+      metaSpan.className = 'list-item-meta';
+      const capText = sub.caption || '';
+      const capPreview = capText.length > 25 ? capText.substring(0, 25) + '...' : capText;
+      metaSpan.textContent = `希望日: ${sub.date} | 「${capPreview}」`;
+
+      infoDiv.appendChild(staffSpan);
+      infoDiv.appendChild(metaSpan);
+      leftDiv.appendChild(img);
+      leftDiv.appendChild(infoDiv);
+
+      const badge = document.createElement('span');
+      badge.className = `badge ${sub.status}`;
+      badge.textContent = sub.status === 'pending' ? 'レビュー待ち' : sub.status === 'approved' ? '承認済み' : '差し戻し';
+
+      item.appendChild(leftDiv);
+      item.appendChild(badge);
+
+      item.onclick = () => openReview(sub.id);
+
+      list.appendChild(item);
+    });
+  }
+
+  function navigateMonth(dir) {
+    calendarMonth += dir;
+    if (calendarMonth > 11) {
+      calendarMonth = 0;
+      calendarYear++;
+    } else if (calendarMonth < 0) {
+      calendarMonth = 11;
+      calendarYear--;
+    }
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const monthYearSpan = document.getElementById('calendar-month-year');
+    monthYearSpan.textContent = `${calendarYear}年${calendarMonth + 1}月`;
+
+    const grid = document.getElementById('calendar-grid');
+    grid.innerHTML = '';
+
+    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+    weekdays.forEach(day => {
+      const header = document.createElement('div');
+      header.className = 'calendar-day-header';
+      header.textContent = day;
+      grid.appendChild(header);
+    });
+
+    const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+    const lastDate = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+
+    for (let i = 0; i < firstDay; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'calendar-cell other-month';
+      grid.appendChild(cell);
+    }
+
+    const today = new Date();
+
+    for (let date = 1; date <= lastDate; date++) {
+      const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+      const cell = document.createElement('div');
+      cell.className = 'calendar-cell';
+      
+      if (today.getFullYear() === calendarYear && today.getMonth() === calendarMonth && today.getDate() === date) {
+        cell.classList.add('today');
+      }
+
+      const cellNum = document.createElement('span');
+      cellNum.className = 'calendar-cell-num';
+      cellNum.textContent = date;
+      cell.appendChild(cellNum);
+
+      const dayEvents = submissions.filter(s => s.date === dateStr);
+      if (dayEvents.length > 0) {
+        const eventsContainer = document.createElement('div');
+        eventsContainer.className = 'calendar-cell-events';
+        dayEvents.forEach(ev => {
+          const dot = document.createElement('span');
+          dot.className = `calendar-dot ${ev.status}`;
+          eventsContainer.appendChild(dot);
+        });
+        cell.appendChild(eventsContainer);
+      }
+
+      cell.onclick = () => {
+        document.getElementById('status-filter').value = 'all';
+        filterListByDate(dateStr);
+      };
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function filterListByDate(dateStr) {
+    renderDashboard();
+    const list = document.getElementById('submission-list');
+    const filtered = submissions.filter(s => s.date === dateStr);
+    list.innerHTML = '';
+
+    const filterHeader = document.createElement('div');
+    filterHeader.style.padding = '8px';
+    filterHeader.style.fontWeight = '700';
+    filterHeader.style.fontSize = '0.85rem';
+    filterHeader.style.color = 'var(--primary)';
+    filterHeader.innerHTML = `📅 ${dateStr} の投稿予定 (${filtered.length}件) <span style="font-weight:normal; text-decoration:underline; cursor:pointer; margin-left:10px;" onclick="renderDashboard()">[フィルタ解除]</span>`;
+    list.appendChild(filterHeader);
+
+    if (filtered.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = '投稿予定はありません。';
+      list.appendChild(empty);
+      return;
+    }
+
+    filtered.forEach(sub => {
+      const item = document.createElement('div');
+      item.className = `list-item ${currentReviewId === sub.id ? 'active' : ''}`;
+      
+      const thumbUrl = (sub.cuts && sub.cuts[0] && sub.cuts[0].image) ? sub.cuts[0].image : dummySvgDataUri;
+      
+      const leftDiv = document.createElement('div');
+      leftDiv.className = 'list-item-left';
+      
+      const img = document.createElement('img');
+      img.className = 'list-item-thumb';
+      img.src = thumbUrl;
+      
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'list-item-info';
+      
+      const staffSpan = document.createElement('span');
+      staffSpan.className = 'list-item-staff';
+      staffSpan.textContent = `${sub.staff} (${sub.theme})`;
+      
+      const metaSpan = document.createElement('span');
+      metaSpan.className = 'list-item-meta';
+      metaSpan.textContent = `予定日: ${sub.date}`;
+
+      infoDiv.appendChild(staffSpan);
+      infoDiv.appendChild(metaSpan);
+      leftDiv.appendChild(img);
+      leftDiv.appendChild(infoDiv);
+
+      const badge = document.createElement('span');
+      badge.className = `badge ${sub.status}`;
+      badge.textContent = sub.status === 'pending' ? 'レビュー待ち' : sub.status === 'approved' ? '承認済み' : '差し戻し';
+
+      item.appendChild(leftDiv);
+      item.appendChild(badge);
+
+      item.onclick = () => openReview(sub.id);
+      list.appendChild(item);
+    });
+  }
+
+  // ==================== オーナー画面：詳細レビュー ====================
+
+  function openReview(id) {
+    currentReviewId = id;
+    const sub = submissions.find(s => s.id === id);
+    if (!sub) return;
+
+    document.getElementById('review-placeholder-card').classList.add('hidden');
+    const panel = document.getElementById('review-panel');
+    panel.classList.remove('hidden');
+
+    document.getElementById('rev-staff').textContent = sub.staff;
+    document.getElementById('rev-date').textContent = sub.date;
+    document.getElementById('rev-theme').textContent = sub.theme;
+    document.getElementById('rev-title').textContent = sub.title || '（タイトルなし）';
+    document.getElementById('rev-caption').textContent = sub.caption || '';
+    document.getElementById('rev-tags').textContent = sub.tags.join(' ');
+    document.getElementById('rev-memo').textContent = sub.memo || '（なし）';
+
+    const snsContainer = document.getElementById('rev-sns-checks');
+    snsContainer.innerHTML = '';
+    if (sub.snsChecks && sub.snsChecks.length > 0) {
+      sub.snsChecks.forEach(c => {
+        const badge = document.createElement('span');
+        badge.className = 'badge approved';
+        badge.style.marginRight = '5px';
+        badge.style.marginBottom = '5px';
+        badge.textContent = `✓ ${c}`;
+        snsContainer.appendChild(badge);
+      });
+    } else {
+      snsContainer.textContent = 'なし';
+    }
+
+    const timeline = document.getElementById('owner-storyboard-timeline');
+    timeline.innerHTML = '';
+    sub.cuts.forEach((cut, idx) => {
+      const row = document.createElement('div');
+      row.className = 'owner-storyboard-item';
+      
+      const numDiv = document.createElement('div');
+      numDiv.style.fontWeight = '800';
+      numDiv.textContent = `#${idx + 1}`;
+      
+      const img = document.createElement('img');
+      img.src = cut.image || dummySvgDataUri;
+      
+      const memoDiv = document.createElement('div');
+      memoDiv.className = 'owner-storyboard-item-meta';
+      memoDiv.innerHTML = `<strong>📷 撮影・構図</strong>`;
+      const memoText = document.createElement('p');
+      memoText.textContent = cut.memo || '（記入なし）';
+      memoDiv.appendChild(memoText);
+
+      const filterDiv = document.createElement('div');
+      filterDiv.className = 'owner-storyboard-item-meta';
+      filterDiv.innerHTML = `<strong>✨ フィルター</strong>`;
+      const filterText = document.createElement('p');
+      filterText.style.fontWeight = '700';
+      filterText.style.color = 'var(--primary)';
+      filterText.textContent = cut.filter;
+      filterDiv.appendChild(filterText);
+
+      row.appendChild(numDiv);
+      row.appendChild(img);
+      row.appendChild(memoDiv);
+      row.appendChild(filterDiv);
+      timeline.appendChild(row);
+    });
+
+    currentRevCarouselIndex = 0;
+    const activeRevCuts = sub.cuts.filter(c => c.image !== '');
+    
+    const prevBtn = document.querySelector('#owner-view .carousel-control.prev');
+    const nextBtn = document.querySelector('#owner-view .carousel-control.next');
+    if (activeRevCuts.length <= 1) {
+      prevBtn.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+    } else {
+      prevBtn.classList.remove('hidden');
+      nextBtn.classList.remove('hidden');
+    }
+
+    updateRevPreview(sub);
+
+    document.getElementById('feedback-comment').value = sub.feedback || '';
+
+    const actionContainer = document.getElementById('review-actions-container');
+    const commentField = document.getElementById('feedback-comment');
+    if (sub.status !== 'pending') {
+      actionContainer.classList.add('hidden');
+      commentField.setAttribute('readonly', 'true');
+    } else {
+      actionContainer.classList.remove('hidden');
+      commentField.removeAttribute('readonly');
+    }
+
+    document.querySelectorAll('.list-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    renderDashboard();
+  }
+
+  function navigateRevCarousel(dir) {
+    const sub = submissions.find(s => s.id === currentReviewId);
+    if (!sub) return;
+    const activeRevCuts = sub.cuts.filter(c => c.image !== '');
+    if (activeRevCuts.length <= 1) return;
+
+    currentRevCarouselIndex += dir;
+    if (currentRevCarouselIndex >= activeRevCuts.length) {
+      currentRevCarouselIndex = 0;
+    } else if (currentRevCarouselIndex < 0) {
+      currentRevCarouselIndex = activeRevCuts.length - 1;
+    }
+    updateRevPreview(sub);
+  }
+
+  function updateRevPreview(sub) {
+    const activeRevCuts = sub.cuts.filter(c => c.image !== '');
+    renderCarouselImage(activeRevCuts, currentRevCarouselIndex, 'rev-img', 'rev-mockup-img-area', 'rev-mockup-indicators');
+    
+    let textVal = '';
+    if (sub.theme) textVal += `【${sub.theme}】`;
+    if (sub.title) textVal += (sub.theme ? ' ' : '') + sub.title + '\n\n';
+    textVal += sub.caption;
+
+    document.getElementById('rev-mockup-text').textContent = textVal;
+    document.getElementById('rev-mockup-tags').textContent = sub.tags.join(' ');
+  }
+
+  function updateStatus(newStatus) {
+    if (currentReviewId === null) return;
+    const subIdx = submissions.findIndex(s => s.id === currentReviewId);
+    if (subIdx === -1) return;
+
+    const feedback = document.getElementById('feedback-comment').value.trim();
+    
+    if (newStatus === 'rejected' && !feedback) {
+      alert('スタッフへ指示するフィードバックコメントを入力してください。');
+      return;
+    }
+
+    submissions[subIdx].status = newStatus;
+    submissions[subIdx].feedback = feedback;
+
+    if (newStatus === 'approved') {
+      triggerConfetti();
+    }
+
+    const statusJp = newStatus === 'approved' ? '承認済み' : '差し戻し';
+    alert(`投稿案を「${statusJp}」に設定しました。`);
+
+    closeReview();
+    renderDashboard();
+    renderCalendar();
+  }
+
+  function closeReview() {
+    currentReviewId = null;
+    document.getElementById('review-panel').classList.add('hidden');
+    document.getElementById('review-placeholder-card').classList.remove('hidden');
+    renderDashboard();
+  }
+
+  // ==================== 紙吹雪(Confetti)エフェクト ====================
+  let confettiActive = false;
+  let confettiParticles = [];
+  const confettiColors = ['#FF7B90', '#FFB3BF', '#8E7365', '#BCA89F', '#E7B10A', '#5D9C59'];
+
+  function triggerConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    confettiParticles = [];
+    for (let i = 0; i < 80; i++) {
+      confettiParticles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 5 + 3,
+        d: Math.random() * canvas.height,
+        color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+        tilt: Math.random() * 8 - 4,
+        tiltAngleIncremental: Math.random() * 0.05 + 0.02,
+        tiltAngle: 0
+      });
+    }
+
+    if (!confettiActive) {
+      confettiActive = true;
+      requestAnimationFrame(updateConfetti);
+    }
+  }
+
+  function updateConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let active = false;
+
+    confettiParticles.forEach((p, idx) => {
+      p.tiltAngle += p.tiltAngleIncremental;
+      p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+      p.x += Math.sin(p.tiltAngle);
+      p.tilt = Math.sin(p.tiltAngle - idx / 3) * 10;
+
+      if (p.y <= canvas.height) {
+        active = true;
+      }
+
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+      ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+      ctx.stroke();
+    });
+
+    if (active) {
+      requestAnimationFrame(updateConfetti);
+    } else {
+      confettiActive = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+</script>
+</body>
+</html>

@@ -344,6 +344,22 @@
       padding: 10px;
     }
 
+    .storyboard-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .storyboard-detail-grid .form-group {
+      margin-bottom: 0 !important;
+    }
+
+    .storyboard-detail-grid textarea {
+      min-height: 64px;
+      font-size: 0.8rem;
+    }
+
     .btn-delete-img {
       position: absolute;
       top: 5px;
@@ -1527,6 +1543,10 @@
         padding: 2px 5px;
       }
 
+      .storyboard-detail-grid {
+        grid-template-columns: 1fr;
+      }
+
       .owner-storyboard-timeline {
         grid-template-columns: 1fr;
       }
@@ -1623,8 +1643,20 @@
     <img id="storyboard-zoom-img" alt="絵コンテ拡大画像">
     <div class="storyboard-zoom-meta">
       <div class="owner-storyboard-item-meta">
-        <strong>📷 撮影・構図</strong>
-        <p id="storyboard-zoom-memo">-</p>
+        <strong>意識した構図</strong>
+        <p id="storyboard-zoom-composition">-</p>
+      </div>
+      <div class="owner-storyboard-item-meta">
+        <strong>目的とターゲット</strong>
+        <p id="storyboard-zoom-purpose">-</p>
+      </div>
+      <div class="owner-storyboard-item-meta">
+        <strong>テロップ</strong>
+        <p id="storyboard-zoom-telop">-</p>
+      </div>
+      <div class="owner-storyboard-item-meta">
+        <strong>ナレーション</strong>
+        <p id="storyboard-zoom-narration">-</p>
       </div>
       <div class="owner-storyboard-item-meta">
         <strong>✨ フィルター</strong>
@@ -1778,9 +1810,23 @@
                 </div>
                 <button type="button" id="sb-del-1" class="btn-delete-img hidden" onclick="deleteRowImage(1); event.stopPropagation();">❌</button>
               </div>
-              <div class="form-group" style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:var(--text-light)">構図・撮影メモ</label>
-                <textarea id="sb-memo-1" rows="2" placeholder="例: パンケーキを真上から撮影。自然光を当てる" style="font-size:0.8rem;" oninput="updatePreview()"></textarea>
+              <div class="storyboard-detail-grid">
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">意識した構図</label>
+                  <textarea id="sb-composition-1" rows="2" placeholder="例: パンケーキを真上から撮影。自然光を当てる" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">目的とターゲット</label>
+                  <textarea id="sb-purpose-1" rows="2" placeholder="例: 新メニューの質感を20代女性に伝える" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">テロップ</label>
+                  <textarea id="sb-telop-1" rows="2" placeholder="例: ふわっと溶ける新作パンケーキ" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">ナレーション</label>
+                  <textarea id="sb-narration-1" rows="2" placeholder="例: 本日から、新作スフレパンケーキが登場します" oninput="updatePreview()"></textarea>
+                </div>
               </div>
               <div class="form-group" style="margin-bottom:0;">
                 <label style="font-size:0.75rem; color:var(--text-light)">フィルターイメージ</label>
@@ -1803,9 +1849,23 @@
                 </div>
                 <button type="button" id="sb-del-2" class="btn-delete-img hidden" onclick="deleteRowImage(2); event.stopPropagation();">❌</button>
               </div>
-              <div class="form-group" style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:var(--text-light)">構図・撮影メモ</label>
-                <textarea id="sb-memo-2" rows="2" placeholder="例: シロップをかけるシズル感のアップ" style="font-size:0.8rem;" oninput="updatePreview()"></textarea>
+              <div class="storyboard-detail-grid">
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">意識した構図</label>
+                  <textarea id="sb-composition-2" rows="2" placeholder="例: シロップをかけるシズル感のアップ" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">目的とターゲット</label>
+                  <textarea id="sb-purpose-2" rows="2" placeholder="例: 食べたい気持ちを高める" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">テロップ</label>
+                  <textarea id="sb-telop-2" rows="2" placeholder="例: とろけるソースをたっぷり" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">ナレーション</label>
+                  <textarea id="sb-narration-2" rows="2" placeholder="例: できたての香りと、なめらかな口どけを楽しめます" oninput="updatePreview()"></textarea>
+                </div>
               </div>
               <div class="form-group" style="margin-bottom:0;">
                 <label style="font-size:0.75rem; color:var(--text-light)">フィルターイメージ</label>
@@ -1828,9 +1888,23 @@
                 </div>
                 <button type="button" id="sb-del-3" class="btn-delete-img hidden" onclick="deleteRowImage(3); event.stopPropagation();">❌</button>
               </div>
-              <div class="form-group" style="margin-bottom:8px;">
-                <label style="font-size:0.75rem; color:var(--text-light)">構図・撮影メモ</label>
-                <textarea id="sb-memo-3" rows="2" placeholder="例: 限定パッケージのアップ" style="font-size:0.8rem;" oninput="updatePreview()"></textarea>
+              <div class="storyboard-detail-grid">
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">意識した構図</label>
+                  <textarea id="sb-composition-3" rows="2" placeholder="例: 限定パッケージのアップ" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">目的とターゲット</label>
+                  <textarea id="sb-purpose-3" rows="2" placeholder="例: 来店前に保存したくなる締めカット" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">テロップ</label>
+                  <textarea id="sb-telop-3" rows="2" placeholder="例: 週末限定・数量限定" oninput="updatePreview()"></textarea>
+                </div>
+                <div class="form-group">
+                  <label style="font-size:0.75rem; color:var(--text-light)">ナレーション</label>
+                  <textarea id="sb-narration-3" rows="2" placeholder="例: ぜひ、お店でゆっくり味わってください" oninput="updatePreview()"></textarea>
+                </div>
               </div>
               <div class="form-group" style="margin-bottom:0;">
                 <label style="font-size:0.75rem; color:var(--text-light)">フィルターイメージ</label>
@@ -2327,9 +2401,9 @@
         status: "pending",
         feedback: "",
         cuts: [
-          { image: dummySvgDataUri, memo: "メイン：パンケーキを真上から自然光で", filter: "明るめ" },
-          { image: dummySvgDataUri, memo: "サブ1：シロップをかけるアップ", filter: "あたたかい" },
-          { image: "", memo: "サブ2：店舗の看板と雰囲気", filter: "ナチュラル" }
+          { image: dummySvgDataUri, memo: "メイン：パンケーキを真上から自然光で", composition: "パンケーキを真上から自然光で撮影", purpose: "新作のふわふわ感をスイーツ好きに伝える", telop: "新作スフレパンケーキ登場", narration: "ふわっと軽い口どけの新作です。", filter: "明るめ" },
+          { image: dummySvgDataUri, memo: "サブ1：シロップをかけるアップ", composition: "シロップをかける手元をアップで撮影", purpose: "食べたい気持ちを高めるシズル訴求", telop: "たっぷり苺ソース", narration: "甘酸っぱい苺ソースをたっぷりかけて仕上げます。", filter: "あたたかい" },
+          { image: "", memo: "サブ2：店舗の看板と雰囲気", composition: "店内の落ち着いた雰囲気を背景に入れる", purpose: "来店イメージを持ってもらう", telop: "店内でゆっくりどうぞ", narration: "ふわみんごカフェでお待ちしています。", filter: "ナチュラル" }
         ]
       },
       {
@@ -2346,9 +2420,9 @@
         status: "approved",
         feedback: "写真のトーンがフェアに合っていて素晴らしいです！承認します。",
         cuts: [
-          { image: dummySvgDataUri, memo: "メイン：いちごパフェのアップ", filter: "明るめ" },
-          { image: "", memo: "", filter: "ナチュラル" },
-          { image: "", memo: "", filter: "ナチュラル" }
+          { image: dummySvgDataUri, memo: "メイン：いちごパフェのアップ", composition: "いちごパフェを正面寄りで華やかに撮影", purpose: "季節フェアをストーリーで即時告知", telop: "初夏のいちごフェア", narration: "期間限定のいちごフェアが始まりました。", filter: "明るめ" },
+          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" },
+          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" }
         ]
       },
       {
@@ -2365,9 +2439,9 @@
         status: "rejected",
         feedback: "ラテアートの画像が登録されていないため、仮画像でもいいので設定した状態で提出してください。",
         cuts: [
-          { image: "", memo: "ルイ君のラテアート写真", filter: "くっきり" },
-          { image: "", memo: "", filter: "ナチュラル" },
-          { image: "", memo: "", filter: "ナチュラル" }
+          { image: "", memo: "ルイ君のラテアート写真", composition: "ラテアートとスタッフの手元を近めに撮影", purpose: "新スタッフの親しみやすさを常連さんに伝える", telop: "新バリスタ紹介", narration: "新しいバリスタのルイです。", filter: "くっきり" },
+          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" },
+          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" }
         ]
       }
     ];
@@ -2740,12 +2814,19 @@
     const cuts = [];
     [1, 2, 3].forEach(idx => {
       const img = document.getElementById(`sb-img-${idx}`).src;
-      const memo = document.getElementById(`sb-memo-${idx}`).value;
+      const composition = document.getElementById(`sb-composition-${idx}`).value;
+      const purpose = document.getElementById(`sb-purpose-${idx}`).value;
+      const telop = document.getElementById(`sb-telop-${idx}`).value;
+      const narration = document.getElementById(`sb-narration-${idx}`).value;
       const filterRadio = document.querySelector(`input[name="filter-${idx}"]:checked`);
       const filter = filterRadio ? filterRadio.value : 'ナチュラル';
       cuts.push({
         image: img.startsWith('data:') ? img : '',
-        memo: memo,
+        memo: composition,
+        composition: composition,
+        purpose: purpose,
+        telop: telop,
+        narration: narration,
         filter: filter
       });
     });
@@ -2956,7 +3037,9 @@
 
     [1, 2, 3].forEach(idx => {
       deleteRowImage(idx);
-      document.getElementById(`sb-memo-${idx}`).value = '';
+      ['composition', 'purpose', 'telop', 'narration'].forEach(field => {
+        document.getElementById(`sb-${field}-${idx}`).value = '';
+      });
       
       const filterRadio = document.querySelector(`input[name="filter-${idx}"][value="明るめ"]`);
       if (filterRadio) filterRadio.checked = true;
@@ -3000,7 +3083,9 @@
     document.querySelectorAll('.sns-check').forEach(c => c.disabled = readonly);
     
     [1, 2, 3].forEach(idx => {
-      document.getElementById(`sb-memo-${idx}`).disabled = readonly;
+      ['composition', 'purpose', 'telop', 'narration'].forEach(field => {
+        document.getElementById(`sb-${field}-${idx}`).disabled = readonly;
+      });
       document.querySelectorAll(`input[name="filter-${idx}"]`).forEach(r => r.disabled = readonly);
     });
 
@@ -3134,7 +3219,10 @@
         delBtn.classList.add('hidden');
       }
 
-      document.getElementById(`sb-memo-${idx}`).value = cut ? cut.memo : '';
+      document.getElementById(`sb-composition-${idx}`).value = cut ? (cut.composition || cut.memo || '') : '';
+      document.getElementById(`sb-purpose-${idx}`).value = cut ? (cut.purpose || '') : '';
+      document.getElementById(`sb-telop-${idx}`).value = cut ? (cut.telop || '') : '';
+      document.getElementById(`sb-narration-${idx}`).value = cut ? (cut.narration || '') : '';
       
       const filterRadio = document.querySelector(`input[name="filter-${idx}"][value="${cut ? cut.filter : '明るめ'}"]`);
       if (filterRadio) filterRadio.checked = true;
@@ -3533,12 +3621,23 @@
       img.alt = `絵コンテ カット${idx + 1}`;
       img.onclick = () => openStoryboardZoom(cut, idx);
       
-      const memoDiv = document.createElement('div');
-      memoDiv.className = 'owner-storyboard-item-meta';
-      memoDiv.innerHTML = `<strong>📷 撮影・構図</strong>`;
-      const memoText = document.createElement('p');
-      memoText.textContent = cut.memo || '（記入なし）';
-      memoDiv.appendChild(memoText);
+      const detailsDiv = document.createElement('div');
+      detailsDiv.className = 'owner-storyboard-item-meta';
+      const details = [
+        ['意識した構図', cut.composition || cut.memo],
+        ['目的とターゲット', cut.purpose],
+        ['テロップ', cut.telop],
+        ['ナレーション', cut.narration]
+      ];
+      details.forEach(([label, value]) => {
+        const strong = document.createElement('strong');
+        strong.textContent = label;
+        const text = document.createElement('p');
+        text.textContent = value || '（記入なし）';
+        text.style.marginBottom = '8px';
+        detailsDiv.appendChild(strong);
+        detailsDiv.appendChild(text);
+      });
 
       const filterDiv = document.createElement('div');
       filterDiv.className = 'owner-storyboard-item-meta';
@@ -3551,7 +3650,7 @@
 
       row.appendChild(numDiv);
       row.appendChild(img);
-      row.appendChild(memoDiv);
+      row.appendChild(detailsDiv);
       row.appendChild(filterDiv);
       timeline.appendChild(row);
     });
@@ -3615,7 +3714,10 @@
     const modal = document.getElementById('storyboard-zoom-modal');
     document.getElementById('storyboard-zoom-title').textContent = `絵コンテ詳細 カット ${index + 1}`;
     document.getElementById('storyboard-zoom-img').src = cut.image || dummySvgDataUri;
-    document.getElementById('storyboard-zoom-memo').textContent = cut.memo || '（記入なし）';
+    document.getElementById('storyboard-zoom-composition').textContent = cut.composition || cut.memo || '（記入なし）';
+    document.getElementById('storyboard-zoom-purpose').textContent = cut.purpose || '（記入なし）';
+    document.getElementById('storyboard-zoom-telop').textContent = cut.telop || '（記入なし）';
+    document.getElementById('storyboard-zoom-narration').textContent = cut.narration || '（記入なし）';
     document.getElementById('storyboard-zoom-filter').textContent = cut.filter || '（未設定）';
     modal.classList.remove('hidden');
   }

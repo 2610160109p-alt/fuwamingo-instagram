@@ -2410,9 +2410,9 @@
    * ☕ CAFÉ SNS Instagram 投稿管理アプリ ロジック
    * 
    * [データ保存に関する重要事項]
-   * 企画書 v1.0 の仕様に基づき、本アプリは localStorage を使用せず、
-   * 完全にブラウザ内のグローバル変数(メモリ)のみでデータを保存・管理しています。
-   * ページを閉じたりリロードすると、変更内容はリセットされます。
+   * 投稿案・承認状態・フィードバックは、このブラウザの localStorage に保存します。
+   * 同じ端末・同じブラウザであれば、ページを更新しても内容が残ります。
+   * 別端末との同期や本格的なログイン管理は、外部データベース化が必要です。
    * ==========================================
    */
 
@@ -2441,6 +2441,7 @@
     reel: 'リール',
     story: 'ストーリー'
   };
+  const STORAGE_KEY = 'fuwamingoCafeSnsSubmissionsV1';
 
   // 読み込み完了時の処理
   window.addEventListener('DOMContentLoaded', () => {
@@ -2457,7 +2458,10 @@
     calendarMonth = today.getMonth();
 
     initFilterChips();
-    initDemoData();
+    if (!loadSavedSubmissions()) {
+      initDemoData();
+      saveSubmissions();
+    }
     switchView('staff');
     
     // パスワード入力フィールドのEnterキー対応
@@ -2517,6 +2521,62 @@
       <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#8E7365">🍰 ふわみんごカフェ</text>
     </svg>`
   );
+
+  function normalizeSubmission(sub) {
+    const cuts = Array.isArray(sub.cuts) ? sub.cuts : [];
+    return {
+      id: sub.id || Date.now(),
+      staff: sub.staff || '未入力スタッフ',
+      date: sub.date || '',
+      format: sub.format || 'feed',
+      theme: sub.theme || 'その他',
+      title: sub.title || '',
+      caption: sub.caption || '',
+      tags: Array.isArray(sub.tags) ? sub.tags : [],
+      snsChecks: Array.isArray(sub.snsChecks) ? sub.snsChecks : [],
+      cuts: [0, 1, 2].map(i => {
+        const cut = cuts[i] || {};
+        const composition = cut.composition || cut.memo || '';
+        return {
+          image: cut.image || '',
+          memo: composition,
+          composition: composition,
+          purpose: cut.purpose || '',
+          telop: cut.telop || '',
+          narration: cut.narration || '',
+          filter: cut.filter || 'ナチュラル'
+        };
+      }),
+      memo: sub.memo || '',
+      status: sub.status || 'pending',
+      feedback: sub.feedback || ''
+    };
+  }
+
+  function loadSavedSubmissions() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return false;
+      submissions = parsed.map(normalizeSubmission);
+      return true;
+    } catch (err) {
+      console.warn('保存データの読み込みに失敗しました。', err);
+      return false;
+    }
+  }
+
+  function saveSubmissions() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
+      return true;
+    } catch (err) {
+      console.error('投稿データの保存に失敗しました。', err);
+      alert('投稿データの保存に失敗しました。画像が大きい場合は、画像を軽くしてから再度お試しください。');
+      return false;
+    }
+  }
 
   // デモ用初期データ
   function initDemoData() {
@@ -3135,6 +3195,7 @@
         submissions[subIdx].memo = memo;
         submissions[subIdx].status = 'pending';
         submissions[subIdx].feedback = ''; // 指示クリア
+        saveSubmissions();
         
         triggerConfetti();
         alert('投稿案を修正して再提出しました。');
@@ -3156,6 +3217,7 @@
         feedback: ''
       };
       submissions.push(newPost);
+      saveSubmissions();
       triggerConfetti();
       alert('投稿案を新しく提出しました。');
     }
@@ -3887,6 +3949,7 @@
 
     submissions[subIdx].status = newStatus;
     submissions[subIdx].feedback = feedback;
+    saveSubmissions();
 
     if (newStatus === 'approved') {
       triggerConfetti();

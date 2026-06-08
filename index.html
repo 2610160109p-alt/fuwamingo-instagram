@@ -9,28 +9,30 @@
   <style>
     /* ==================== デザインシステム (CSS) ==================== */
     :root {
-      --primary: #FF7B90;
-      --primary-light: #FFB3BF;
-      --primary-hover: #E85F76;
-      --secondary: #8E7365;
-      --secondary-light: #BCA89F;
-      --secondary-hover: #765D50;
-      --bg: #FFF9F6;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --text: #2E2724;
-      --text-light: #7E706A;
-      --border: #EADCD6;
-      --border-focus: #FF7B90;
+      --primary: #C9848B;
+      --primary-light: #E9C3C7;
+      --primary-hover: #B06A72;
+      --secondary: #4B332A;
+      --secondary-light: #9A8074;
+      --secondary-hover: #35231D;
+      --gold: #B88A3D;
+      --gold-light: #F6E8CA;
+      --bg: #FCF7F3;
+      --card-bg: rgba(255, 255, 255, 0.78);
+      --text: #2B211D;
+      --text-light: #776761;
+      --border: rgba(101, 74, 62, 0.14);
+      --border-focus: #C9848B;
       --white: #FFFFFF;
-      --shadow: 0 10px 30px rgba(142, 115, 101, 0.05);
-      --shadow-sm: 0 4px 12px rgba(142, 115, 101, 0.03);
-      --shadow-lg: 0 16px 40px rgba(142, 115, 101, 0.1);
-      --success: #5D9C59;
-      --success-light: #EAF2E8;
-      --warning: #E7B10A;
-      --warning-light: #FEF9E7;
-      --danger: #C92C3B;
-      --danger-light: #FCEAEA;
+      --shadow: 0 18px 48px rgba(68, 43, 31, 0.08);
+      --shadow-sm: 0 8px 24px rgba(68, 43, 31, 0.06);
+      --shadow-lg: 0 26px 70px rgba(68, 43, 31, 0.16);
+      --success: #4D8B65;
+      --success-light: #E9F2EC;
+      --warning: #B88A3D;
+      --warning-light: #FFF6E3;
+      --danger: #B85B61;
+      --danger-light: #FBEDEE;
       --transition: all 0.2s ease-in-out;
     }
 
@@ -43,9 +45,10 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
       background-color: var(--bg);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(255, 123, 144, 0.04) 0px, transparent 40%),
-        radial-gradient(at 100% 100%, rgba(142, 115, 101, 0.04) 0px, transparent 40%);
+      background-image:
+        radial-gradient(circle at 12% 8%, rgba(201, 132, 139, 0.18) 0, transparent 30%),
+        radial-gradient(circle at 88% 0%, rgba(184, 138, 61, 0.16) 0, transparent 26%),
+        linear-gradient(135deg, #FFFDFB 0%, #FCF3EF 44%, #F8ECE7 100%);
       background-attachment: fixed;
       color: var(--text);
       line-height: 1.5;
@@ -67,15 +70,15 @@
 
     /* Header */
     header {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.76);
       border-bottom: 1px solid var(--border);
       padding: 0.8rem 1rem;
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 2px 15px rgba(142, 115, 101, 0.02);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 8px 30px rgba(68, 43, 31, 0.05);
     }
 
     .header-container {
@@ -95,6 +98,7 @@
       font-weight: 800;
       font-size: 1.25rem;
       color: var(--text);
+      letter-spacing: 0.02em;
     }
 
     .header-logo svg {
@@ -107,7 +111,7 @@
       align-items: center;
       gap: 10px;
       font-size: 0.8rem;
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.72);
       border: 1px solid var(--border);
       border-radius: 999px;
       padding: 6px 8px 6px 12px;
@@ -164,11 +168,11 @@
 
     .tabs {
       display: flex;
-      background: rgba(142, 115, 101, 0.06);
-      padding: 6px;
-      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.52);
+      padding: 7px;
+      border-radius: 16px;
       gap: 6px;
-      border: 1px solid rgba(234, 220, 214, 0.75);
+      border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
 
@@ -182,7 +186,7 @@
       background: none;
       font-size: 0.85rem;
       font-weight: 700;
-      border-radius: 14px;
+      border-radius: 12px;
       transition: var(--transition);
       display: flex;
       align-items: center;
@@ -192,7 +196,7 @@
 
     .tab.active {
       background-color: var(--white);
-      color: var(--primary);
+      color: var(--secondary);
       box-shadow: var(--shadow-sm);
     }
 
@@ -205,7 +209,7 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 10px;
+      padding: 18px 10px 10px;
     }
 
     .view-grid {
@@ -227,12 +231,12 @@
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 20px 15px;
+      padding: 22px 18px;
       border-radius: 18px;
       box-shadow: var(--shadow);
       margin-bottom: 20px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       max-width: 100%;
       word-wrap: break-word;
     }
@@ -240,13 +244,13 @@
     h2 {
       color: var(--text);
       font-size: 1.1rem;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 15px;
       display: flex;
       align-items: center;
       gap: 8px;
-      border-left: 4px solid var(--primary);
-      padding-left: 8px;
+      border-left: 3px solid var(--gold);
+      padding-left: 10px;
     }
 
     h3 {
@@ -471,26 +475,26 @@
 
     /* Buttons */
     .btn {
-      background-color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
       color: var(--white);
       padding: 10px 20px;
       min-height: 44px;
       border: none;
-      border-radius: 12px;
+      border-radius: 13px;
       cursor: pointer;
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: 800;
       transition: var(--transition);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
       width: 100%;
-      box-shadow: 0 4px 12px rgba(255, 123, 144, 0.12);
+      box-shadow: 0 12px 24px rgba(201, 132, 139, 0.18);
     }
 
     .btn:hover {
-      background-color: var(--primary-hover);
+      background: linear-gradient(135deg, var(--primary-hover), var(--secondary));
       transform: translateY(-1px);
     }
 
@@ -860,6 +864,95 @@
       gap: 10px;
     }
 
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .list-header h2 {
+      margin-bottom: 0;
+    }
+
+    .filter-group select {
+      min-height: 38px;
+      padding: 8px 34px 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--text);
+      font-weight: 700;
+      outline: none;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .list-item:hover,
+    .list-item.active {
+      border-color: var(--primary-light);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .list-item.active {
+      background: rgba(255, 248, 244, 0.92);
+    }
+
+    .list-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .list-item-thumb {
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      object-fit: cover;
+      background: var(--white);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .list-item-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .list-item-staff {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .list-item-meta {
+      margin-top: 2px;
+      font-size: 0.7rem;
+      color: var(--text-light);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .history-item {
       display: flex;
       justify-content: space-between;
@@ -948,18 +1041,76 @@
     }
 
     /* Owner KPI Stats */
+    .dashboard-hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 18px;
+      padding: 24px;
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 248, 244, 0.66)),
+        radial-gradient(circle at 82% 20%, rgba(184, 138, 61, 0.12), transparent 28%);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .dashboard-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--gold-light);
+      color: #805F23;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .dashboard-title {
+      margin: 0 0 7px;
+      padding: 0;
+      border: 0;
+      font-size: clamp(1.55rem, 4vw, 2.15rem);
+      letter-spacing: 0;
+      line-height: 1.15;
+    }
+
+    .dashboard-description {
+      max-width: 620px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      line-height: 1.75;
+    }
+
+    .dashboard-action {
+      width: auto;
+      min-width: 138px;
+      margin-top: 0;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--secondary), #6B4A3D);
+      box-shadow: 0 14px 26px rgba(75, 51, 42, 0.18);
+      white-space: nowrap;
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 14px;
+      margin-bottom: 18px;
     }
 
     .stat-card {
-      background: var(--white);
-      padding: 12px 8px;
-      border-radius: 12px;
-      text-align: center;
+      background: rgba(255, 255, 255, 0.72);
+      padding: 16px 14px;
+      border-radius: 16px;
+      text-align: left;
       border: 1px solid var(--border);
       box-shadow: var(--shadow-sm);
     }
@@ -968,27 +1119,36 @@
       font-size: 0.7rem;
       font-weight: 700;
       color: var(--text-light);
-      margin-bottom: 2px;
+      margin-bottom: 6px;
     }
 
     .stat-num {
-      font-size: 1.4rem;
+      font-size: 1.7rem;
       font-weight: 800;
       color: var(--text);
+      line-height: 1;
     }
 
-    .stat-card.total { border-left: 4px solid var(--secondary); }
-    .stat-card.pending { border-left: 4px solid var(--warning); }
-    .stat-card.approved { border-left: 4px solid var(--success); }
+    .stat-card.total { border-top: 3px solid var(--secondary); }
+    .stat-card.pending { border-top: 3px solid var(--warning); }
+    .stat-card.approved { border-top: 3px solid var(--success); }
 
     .stat-card.total .stat-num { color: var(--secondary); }
     .stat-card.pending .stat-num { color: var(--warning); }
     .stat-card.approved .stat-num { color: var(--success); }
 
     /* Calendar Grid */
-    .calendar-card {
+    .calendar-dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.7fr);
+      gap: 18px;
+      align-items: start;
       margin-bottom: 18px;
-      padding: 18px;
+    }
+
+    .calendar-card {
+      margin-bottom: 0;
+      padding: 20px;
     }
 
     .calendar-header {
@@ -1001,11 +1161,11 @@
     }
 
     .calendar-nav-btn {
-      background: none;
+      background: rgba(255, 255, 255, 0.68);
       border: 1px solid var(--border);
       width: 34px;
       height: 34px;
-      border-radius: 50%;
+      border-radius: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -1022,34 +1182,35 @@
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
+      gap: 8px;
     }
 
     .calendar-day-header {
-      font-size: 0.65rem;
+      font-size: 0.68rem;
       font-weight: 700;
       color: var(--text-light);
-      padding: 4px 0;
+      padding: 4px 0 8px;
       text-align: center;
     }
 
     .calendar-cell {
-      aspect-ratio: 1 / 1;
-      background: var(--white);
+      min-height: 84px;
+      background: rgba(255, 255, 255, 0.72);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 5px;
+      border-radius: 14px;
+      padding: 8px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       font-size: 0.7rem;
       cursor: pointer;
       transition: var(--transition);
-      min-height: 46px;
     }
 
     .calendar-cell:hover {
       border-color: var(--primary-light);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
     }
 
     .calendar-cell.other-month {
@@ -1058,31 +1219,117 @@
 
     .calendar-cell.today {
       border-color: var(--primary);
-      background: rgba(255, 123, 144, 0.02);
+      background: rgba(201, 132, 139, 0.08);
       font-weight: 700;
     }
 
     .calendar-cell-num {
       text-align: left;
-      font-weight: 600;
+      font-weight: 800;
+      color: var(--secondary);
     }
 
     .calendar-cell-events {
       display: flex;
-      justify-content: flex-end;
-      gap: 2px;
+      justify-content: flex-start;
+      gap: 4px;
       flex-wrap: wrap;
     }
 
-    .calendar-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
+    .calendar-status-label {
+      display: inline-flex;
+      max-width: 100%;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 0.58rem;
+      font-weight: 800;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .calendar-dot.pending { background-color: var(--warning); }
-    .calendar-dot.approved { background-color: var(--success); }
-    .calendar-dot.rejected { background-color: var(--danger); }
+    .calendar-status-label.pending {
+      background: var(--warning-light);
+      color: #806126;
+    }
+    .calendar-status-label.approved {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    .calendar-status-label.rejected {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .pending-panel {
+      min-height: 100%;
+    }
+
+    .pending-panel h2 {
+      margin-bottom: 4px;
+    }
+
+    .pending-panel-note {
+      margin-bottom: 14px;
+      color: var(--text-light);
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+
+    .pending-review-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .pending-review-item {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.68);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .pending-review-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--primary-light);
+    }
+
+    .pending-review-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      background: var(--white);
+    }
+
+    .pending-review-title {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pending-review-meta {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.68rem;
+      color: var(--text-light);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     /* Owner Timeline list */
     .owner-storyboard-timeline {
@@ -1210,6 +1457,20 @@
         grid-template-columns: 1fr;
       }
 
+      .dashboard-hero {
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .dashboard-action {
+        width: 100%;
+      }
+
+      .stats,
+      .calendar-dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
       .header-container {
         justify-content: center;
       }
@@ -1257,8 +1518,13 @@
       }
 
       .calendar-cell {
-        min-height: 42px;
-        padding: 4px;
+        min-height: 70px;
+        padding: 6px;
+      }
+
+      .calendar-status-label {
+        font-size: 0.54rem;
+        padding: 2px 5px;
       }
 
       .owner-storyboard-timeline {
@@ -1728,6 +1994,17 @@
 
     <!-- オーナー画面本体 (パスワード認証後に表示) -->
     <div id="owner-main-content" class="hidden">
+      <div class="dashboard-hero">
+        <div>
+          <span class="dashboard-eyebrow">CAFÉ SOCIAL OPERATIONS</span>
+          <h1 class="dashboard-title">投稿管理ダッシュボード</h1>
+          <p class="dashboard-description">
+            Instagram投稿案の提出状況、承認待ち、公開予定をひと目で確認できます。上品な世界観を保ちながら、スタッフとオーナーの確認フローをスムーズに進める管理画面です。
+          </p>
+        </div>
+        <button class="btn dashboard-action" onclick="startNewPostFromDashboard()">＋ 新規投稿</button>
+      </div>
+
       <!-- 統計値 -->
       <div class="stats">
         <div class="stat-card total">
@@ -1745,17 +2022,27 @@
       </div>
 
       <!-- スケジュールカレンダー -->
-      <div class="card calendar-card">
-        <div class="calendar-header">
-          <h2>📅 投稿スケジュール</h2>
-          <div>
-            <button class="calendar-nav-btn" onclick="navigateMonth(-1)">◀</button>
-            <span id="calendar-month-year" style="font-weight: 700; margin: 0 10px;">-</span>
-            <button class="calendar-nav-btn" onclick="navigateMonth(1)">▶</button>
+      <div class="calendar-dashboard-grid">
+        <div class="card calendar-card">
+          <div class="calendar-header">
+            <h2>投稿スケジュール</h2>
+            <div>
+              <button class="calendar-nav-btn" onclick="navigateMonth(-1)">◀</button>
+              <span id="calendar-month-year" style="font-weight: 800; margin: 0 10px; color:var(--secondary);">-</span>
+              <button class="calendar-nav-btn" onclick="navigateMonth(1)">▶</button>
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendar-grid">
+            <!-- JSで動的描画 -->
           </div>
         </div>
-        <div class="calendar-grid" id="calendar-grid">
-          <!-- JSで動的描画 -->
+
+        <div class="card pending-panel">
+          <h2>承認待ちリスト</h2>
+          <p class="pending-panel-note">レビュー待ちの投稿を優先表示します。選択すると右下の詳細レビューで内容とフィードバック欄を確認できます。</p>
+          <div id="pending-review-list" class="pending-review-list">
+            <!-- JSで描画 -->
+          </div>
         </div>
       </div>
 
@@ -2203,6 +2490,15 @@
         closeReview();
       }
     }
+  }
+
+  function startNewPostFromDashboard() {
+    document.getElementById('current-user-select').value = 'staff:佐々木';
+    syncCustomStaffInput();
+    switchView('staff');
+    resetForm();
+    switchStaffSubTab('create');
+    document.getElementById('staff-editor-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   // オーナーパスワード確認
@@ -2907,6 +3203,7 @@
     document.getElementById('stat-total').textContent = total;
     document.getElementById('stat-pending').textContent = pending;
     document.getElementById('stat-approved').textContent = approved;
+    renderPendingReviewList();
 
     const filterVal = document.getElementById('status-filter').value;
     const list = document.getElementById('submission-list');
@@ -2973,6 +3270,58 @@
     });
   }
 
+  function renderPendingReviewList() {
+    const panel = document.getElementById('pending-review-list');
+    if (!panel) return;
+
+    const pendingItems = submissions
+      .filter(s => s.status === 'pending')
+      .sort((a, b) => new Date(a.date) - new Date(b.date) || b.id - a.id);
+
+    panel.innerHTML = '';
+
+    if (pendingItems.length === 0) {
+      panel.innerHTML = `
+        <div class="empty-state" style="padding:18px 8px;">
+          <span class="icon">✓</span>
+          <p>現在、承認待ちの投稿はありません。</p>
+        </div>
+      `;
+      return;
+    }
+
+    pendingItems.forEach(sub => {
+      const item = document.createElement('div');
+      item.className = 'pending-review-item';
+      item.onclick = () => openReview(sub.id);
+
+      const thumb = document.createElement('img');
+      thumb.className = 'pending-review-thumb';
+      thumb.src = (sub.cuts && sub.cuts[0] && sub.cuts[0].image) ? sub.cuts[0].image : dummySvgDataUri;
+
+      const info = document.createElement('div');
+      const title = document.createElement('span');
+      title.className = 'pending-review-title';
+      title.textContent = sub.title || `${sub.theme}の投稿案`;
+
+      const meta = document.createElement('span');
+      meta.className = 'pending-review-meta';
+      meta.textContent = `${sub.date} / ${sub.staff} / ${getPostFormatLabel(sub.format)}`;
+
+      info.appendChild(title);
+      info.appendChild(meta);
+
+      const badge = document.createElement('span');
+      badge.className = 'badge pending';
+      badge.textContent = '確認';
+
+      item.appendChild(thumb);
+      item.appendChild(info);
+      item.appendChild(badge);
+      panel.appendChild(item);
+    });
+  }
+
   function navigateMonth(dir) {
     if (!isOwnerAuthenticated) return;
 
@@ -3033,11 +3382,18 @@
       if (dayEvents.length > 0) {
         const eventsContainer = document.createElement('div');
         eventsContainer.className = 'calendar-cell-events';
-        dayEvents.forEach(ev => {
-          const dot = document.createElement('span');
-          dot.className = `calendar-dot ${ev.status}`;
-          eventsContainer.appendChild(dot);
+        dayEvents.slice(0, 2).forEach(ev => {
+          const label = document.createElement('span');
+          label.className = `calendar-status-label ${ev.status}`;
+          label.textContent = ev.status === 'pending' ? '承認待ち' : ev.status === 'approved' ? '承認済み' : '差戻し';
+          eventsContainer.appendChild(label);
         });
+        if (dayEvents.length > 2) {
+          const moreLabel = document.createElement('span');
+          moreLabel.className = 'calendar-status-label pending';
+          moreLabel.textContent = `+${dayEvents.length - 2}`;
+          eventsContainer.appendChild(moreLabel);
+        }
         cell.appendChild(eventsContainer);
       }
 

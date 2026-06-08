@@ -1469,36 +1469,112 @@
     }
 
     @media (max-width: 800px) {
+      header {
+        padding: 0.55rem 0.7rem;
+      }
+
+      .tabs-container {
+        margin-top: 10px;
+        padding: 0 10px;
+      }
+
+      .container {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 16px 14px;
+        border-radius: 16px;
+        margin-bottom: 12px;
+      }
+
+      h2 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+      }
+
       .review-grid {
         grid-template-columns: 1fr;
       }
 
       .dashboard-hero {
         flex-direction: column;
-        padding: 20px;
+        gap: 10px;
+        margin-bottom: 10px;
+        padding: 14px;
+        border-radius: 16px;
+      }
+
+      .dashboard-eyebrow {
+        margin-bottom: 5px;
+        padding: 3px 8px;
+        font-size: 0.58rem;
+      }
+
+      .dashboard-title {
+        margin-bottom: 4px;
+        font-size: 1.2rem;
+        line-height: 1.25;
+      }
+
+      .dashboard-description {
+        font-size: 0.74rem;
+        line-height: 1.55;
       }
 
       .dashboard-action {
         width: 100%;
+        min-height: 38px;
+        padding: 9px 12px;
+        font-size: 0.82rem;
       }
 
-      .stats,
+      .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .stat-card {
+        padding: 10px 8px;
+        border-radius: 12px;
+      }
+
+      .stat-label {
+        margin-bottom: 4px;
+        font-size: 0.6rem;
+      }
+
+      .stat-num {
+        font-size: 1.18rem;
+      }
+
       .calendar-dashboard-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
       }
 
       .header-container {
         justify-content: center;
+        gap: 8px;
       }
 
       .header-logo {
         width: 100%;
         justify-content: center;
+        font-size: 1rem;
+      }
+
+      .header-logo svg {
+        width: 22px;
+        height: 22px;
       }
 
       .header-user-info {
         width: 100%;
-        border-radius: 14px;
+        border-radius: 12px;
+        padding: 5px 6px 5px 10px;
         justify-content: space-between;
       }
 
@@ -1513,12 +1589,14 @@
       }
 
       .tabs {
-        border-radius: 14px;
+        border-radius: 12px;
+        padding: 5px;
       }
 
       .tab {
         font-size: 0.8rem;
-        padding: 10px 8px;
+        min-height: 38px;
+        padding: 8px 6px;
       }
 
       .calendar-card {
@@ -1526,21 +1604,60 @@
       }
 
       .calendar-header {
-        align-items: stretch;
+        align-items: center;
+        margin-bottom: 10px;
       }
 
       .calendar-header h2 {
-        width: 100%;
+        width: auto;
+        margin-bottom: 0;
       }
 
       .calendar-cell {
-        min-height: 70px;
-        padding: 6px;
+        min-height: 50px;
+        padding: 5px;
+        border-radius: 10px;
       }
 
       .calendar-status-label {
         font-size: 0.54rem;
-        padding: 2px 5px;
+        padding: 1px 5px;
+      }
+
+      .calendar-grid {
+        gap: 4px;
+      }
+
+      .calendar-day-header {
+        padding-bottom: 4px;
+        font-size: 0.62rem;
+      }
+
+      .pending-panel {
+        padding: 14px;
+      }
+
+      .pending-panel-note {
+        margin-bottom: 10px;
+        font-size: 0.7rem;
+        line-height: 1.45;
+      }
+
+      .pending-review-list {
+        gap: 8px;
+      }
+
+      .pending-review-item {
+        grid-template-columns: 38px 1fr auto;
+        gap: 8px;
+        padding: 9px;
+        border-radius: 12px;
+      }
+
+      .pending-review-thumb {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
       }
 
       .storyboard-detail-grid {

@@ -126,6 +126,35 @@
       cursor: pointer;
     }
 
+    .header-user-info input {
+      min-height: 40px;
+      width: 170px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--text);
+      font-weight: 600;
+      outline: none;
+    }
+
+    .form-hint {
+      margin-top: 6px;
+      color: var(--text-light);
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .form-hint.warning {
+      color: var(--warning);
+      font-weight: 700;
+    }
+
+    .form-hint.good {
+      color: var(--success);
+      font-weight: 700;
+    }
+
     /* Tabs */
     .tabs-container {
       max-width: 1200px;
@@ -1152,6 +1181,11 @@
         min-width: 0;
       }
 
+      .header-user-info input {
+        width: 100%;
+        flex-basis: 100%;
+      }
+
       .tabs {
         border-radius: 14px;
       }
@@ -1305,8 +1339,10 @@
         <option value="staff:佐々木">スタッフ: 佐々木</option>
         <option value="staff:田中">スタッフ: 田中</option>
         <option value="staff:山田">スタッフ: 山田</option>
+        <option value="staff:custom">スタッフ名を入力...</option>
         <option value="owner">オーナー</option>
       </select>
+      <input type="text" id="custom-staff-name" class="hidden" placeholder="スタッフ名">
     </div>
   </div>
 </header>
@@ -1353,6 +1389,7 @@
         <div class="form-group">
           <label for="post-date">投稿希望日</label>
           <input type="date" id="post-date">
+          <p id="date-guidance" class="form-hint">投稿希望日の3〜5日前までの提出が目安です。</p>
         </div>
 
         <div class="form-group">
@@ -1482,6 +1519,7 @@
         <div class="form-group">
           <label for="hashtag-input">ハッシュタグ</label>
           <input type="text" id="hashtag-input" placeholder="入力してEnterで追加 (例: #カフェ)">
+          <p id="tag-guidance" class="form-hint">ハッシュタグは5〜10個を目安に設定してください。</p>
           <div id="tags-container" class="tag-badge-container"></div>
         </div>
 
@@ -1815,6 +1853,7 @@
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     document.getElementById('post-date').value = `${yyyy}-${mm}-${dd}`;
+    updateDateGuidance();
     
     // カレンダーの初期表示年月も現在にする
     calendarYear = today.getFullYear();
@@ -1831,6 +1870,13 @@
         checkOwnerPassword();
       }
     });
+
+    document.getElementById('custom-staff-name').addEventListener('input', () => {
+      updateStaffRevBadge();
+      renderStaffHistory();
+    });
+
+    document.getElementById('post-date').addEventListener('change', updateDateGuidance);
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -1950,6 +1996,7 @@
   function handleUserChange() {
     const select = document.getElementById('current-user-select');
     const val = select.value;
+    syncCustomStaffInput();
     
     // リセット処理
     resetForm();
@@ -1970,10 +2017,25 @@
   function getActiveUser() {
     const select = document.getElementById('current-user-select');
     const val = select.value;
+    if (val === 'staff:custom') {
+      const customName = document.getElementById('custom-staff-name').value.trim();
+      return { role: 'staff', name: customName || '未入力スタッフ' };
+    }
     if (val.startsWith('staff:')) {
       return { role: 'staff', name: val.split(':')[1] };
     }
     return { role: 'owner', name: 'オーナー' };
+  }
+
+  function syncCustomStaffInput() {
+    const select = document.getElementById('current-user-select');
+    const input = document.getElementById('custom-staff-name');
+    if (select.value === 'staff:custom') {
+      input.classList.remove('hidden');
+      input.focus();
+    } else {
+      input.classList.add('hidden');
+    }
   }
 
   function switchView(view) {
@@ -1994,6 +2056,7 @@
       if (user.role !== 'staff') {
         selectUser.value = 'staff:佐々木';
       }
+      syncCustomStaffInput();
       
       switchStaffSubTab('create');
       updateStaffRevBadge();
@@ -2004,6 +2067,7 @@
       
       // ドロップダウンをオーナーに同期
       selectUser.value = 'owner';
+      syncCustomStaffInput();
 
       // オーナー画面のパスワードロック判定
       if (!isOwnerAuthenticated) {
@@ -2157,6 +2221,61 @@
       badge.appendChild(delSpan);
       container.appendChild(badge);
     });
+    updateTagGuidance();
+  }
+
+  function updateTagGuidance() {
+    const guidance = document.getElementById('tag-guidance');
+    const count = currentTags.length;
+    guidance.classList.remove('warning', 'good');
+
+    if (count === 0) {
+      guidance.textContent = 'ハッシュタグは5〜10個を目安に設定してください。';
+    } else if (count < 5) {
+      guidance.textContent = `現在${count}個です。企画書の運用ルールでは5〜10個が目安です。`;
+      guidance.classList.add('warning');
+    } else if (count <= 10) {
+      guidance.textContent = `現在${count}個です。目安の範囲内です。`;
+      guidance.classList.add('good');
+    } else {
+      guidance.textContent = `現在${count}個です。10個以内を目安に整理してください。`;
+      guidance.classList.add('warning');
+    }
+  }
+
+  function parseLocalDate(value) {
+    const parts = value.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+
+  function updateDateGuidance() {
+    const guidance = document.getElementById('date-guidance');
+    const value = document.getElementById('post-date').value;
+    const postDate = parseLocalDate(value);
+    guidance.classList.remove('warning', 'good');
+
+    if (!postDate) {
+      guidance.textContent = '投稿希望日の3〜5日前までの提出が目安です。';
+      return;
+    }
+
+    const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const diffDays = Math.round((postDate - todayStart) / 86400000);
+
+    if (diffDays < 0) {
+      guidance.textContent = '過去の日付です。投稿希望日を確認してください。';
+      guidance.classList.add('warning');
+    } else if (diffDays < 3) {
+      guidance.textContent = `投稿希望日まであと${diffDays}日です。企画書の提出ルールでは3〜5日前が目安です。`;
+      guidance.classList.add('warning');
+    } else if (diffDays <= 5) {
+      guidance.textContent = `投稿希望日まであと${diffDays}日です。提出目安の範囲内です。`;
+      guidance.classList.add('good');
+    } else {
+      guidance.textContent = `投稿希望日まであと${diffDays}日です。3〜5日前までに提出できるよう準備してください。`;
+    }
   }
 
   function removeTag(index) {
@@ -2308,6 +2427,12 @@
     const user = getActiveUser();
     if (user.role !== 'staff') return;
 
+    if (user.name === '未入力スタッフ') {
+      alert('担当スタッフ名を入力してください。');
+      document.getElementById('custom-staff-name').focus();
+      return;
+    }
+
     const postDate = document.getElementById('post-date').value;
     if (!postDate) {
       alert('投稿希望日を選択してください。');
@@ -2331,6 +2456,11 @@
     document.querySelectorAll('.sns-check:checked').forEach(cb => {
       snsChecks.push(cb.value);
     });
+
+    if (currentTags.length < 5 || currentTags.length > 10) {
+      const proceed = confirm(`ハッシュタグは5〜10個が目安です。現在${currentTags.length}個ですが、このまま提出しますか？`);
+      if (!proceed) return;
+    }
 
     if (isCorrection && currentEditingSubmissionId !== null) {
       const subIdx = submissions.findIndex(s => s.id === currentEditingSubmissionId);
@@ -2408,6 +2538,7 @@
     toggleFormReadonly(false);
 
     updateCharCount();
+    updateDateGuidance();
     updatePreview();
   }
 
@@ -2537,6 +2668,7 @@
     currentEditingSubmissionId = sub.id;
 
     document.getElementById('post-date').value = sub.date;
+    updateDateGuidance();
     
     const themeRadio = document.querySelector(`input[name="theme"][value="${sub.theme}"]`);
     if (themeRadio) themeRadio.checked = true;

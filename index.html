@@ -314,6 +314,14 @@
       max-width: 100%;
     }
 
+    .storyboard-upload-area.vertical-format {
+      aspect-ratio: 9/16;
+      max-height: 360px;
+      width: min(100%, 220px);
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     .storyboard-upload-area:hover {
       border-color: var(--primary);
       background: rgba(255, 123, 144, 0.02);
@@ -664,6 +672,15 @@
       position: relative;
     }
 
+    .mockup-image-area.format-feed {
+      aspect-ratio: 1 / 1;
+    }
+
+    .mockup-image-area.format-reel,
+    .mockup-image-area.format-story {
+      aspect-ratio: 9 / 16;
+    }
+
     .mockup-image-area img {
       width: 100%;
       height: 100%;
@@ -770,6 +787,7 @@
     /* Sub-tabs inside Staff View */
     .sub-tabs {
       display: flex;
+      flex-wrap: wrap;
       gap: 6px;
       margin-bottom: 16px;
       background: rgba(142, 115, 101, 0.06);
@@ -779,7 +797,7 @@
     }
 
     .sub-tab {
-      flex: 1;
+      flex: 1 1 120px;
       background: transparent;
       border: none;
       font-size: 0.85rem;
@@ -802,6 +820,37 @@
     .sub-tab:hover {
       color: var(--primary-hover);
       background: rgba(255, 255, 255, 0.55);
+    }
+
+    .format-badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--warning-light);
+      color: #9A6E00;
+      font-size: 0.68rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .owner-review-side {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feedback-inline-panel {
+      background: #FFFDFC;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feedback-inline-panel textarea {
+      min-height: 96px;
     }
 
     /* Staff History List */
@@ -1371,6 +1420,18 @@
         <button id="subtab-create-btn" class="sub-tab active" onclick="switchStaffSubTab('create')">
           新規作成
         </button>
+        <button id="subtab-basic-btn" class="sub-tab" onclick="focusStaffSection('basic')">
+          基本情報
+        </button>
+        <button id="subtab-storyboard-btn" class="sub-tab" onclick="focusStaffSection('storyboard')">
+          絵コンテ
+        </button>
+        <button id="subtab-copy-btn" class="sub-tab" onclick="focusStaffSection('copy')">
+          字コンテ
+        </button>
+        <button id="subtab-checks-btn" class="sub-tab" onclick="focusStaffSection('checks')">
+          導線確認
+        </button>
         <button id="subtab-history-btn" class="sub-tab" onclick="switchStaffSubTab('history')">
           提出履歴 <span id="staff-rev-count-badge" class="badge rejected" style="display:none; padding:1px 5px; font-size:0.6rem;">0</span>
         </button>
@@ -1386,7 +1447,7 @@
 
         <h2 id="editor-title">新規投稿案の作成</h2>
         
-        <div class="form-group">
+        <div class="form-group" id="staff-section-basic">
           <label for="post-date">投稿希望日</label>
           <input type="date" id="post-date">
           <p id="date-guidance" class="form-hint">投稿希望日の3〜5日前までの提出が目安です。</p>
@@ -1414,8 +1475,27 @@
           </div>
         </div>
 
-        <!-- 3コマ固定の絵コンテ用紙 -->
         <div class="form-group">
+          <label>投稿形式</label>
+          <div class="theme-chips">
+            <label class="theme-chip">
+              <input type="radio" name="post-format" value="feed" checked onchange="updatePreview()">
+              <span>□ フィード</span>
+            </label>
+            <label class="theme-chip">
+              <input type="radio" name="post-format" value="reel" onchange="updatePreview()">
+              <span>▶ リール</span>
+            </label>
+            <label class="theme-chip">
+              <input type="radio" name="post-format" value="story" onchange="updatePreview()">
+              <span>▯ ストーリー</span>
+            </label>
+          </div>
+          <p class="form-hint">リール・ストーリーは縦長プレビューで確認できます。</p>
+        </div>
+
+        <!-- 3コマ固定の絵コンテ用紙 -->
+        <div class="form-group" id="staff-section-storyboard">
           <label>🎬 絵コンテ入力 (画像は最大3枚まで設定できます)</label>
           <div class="storyboard-container">
             
@@ -1498,7 +1578,7 @@
         </div>
 
         <!-- 字コンテ入力 -->
-        <div class="form-group">
+        <div class="form-group" id="staff-section-copy">
           <label for="post-title">タイトル・見出しワード</label>
           <input type="text" id="post-title" placeholder="例: 新スフレパンケーキ登場！" oninput="updatePreview()">
         </div>
@@ -1523,7 +1603,7 @@
           <div id="tags-container" class="tag-badge-container"></div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="staff-section-checks">
           <label>SNS導線チェック</label>
           <div class="checkbox-group">
             <label class="checkbox-label">
@@ -1583,6 +1663,7 @@
     <div class="right-section">
       <div class="sticky-preview">
         <h3>📱 Instagram 投稿プレビュー</h3>
+        <span id="mockup-format-label" class="format-badge">フィード</span>
         <div class="instagram-mockup">
           <div class="mockup-header">
             <div class="mockup-avatar">☕</div>
@@ -1721,6 +1802,10 @@
                   <span id="rev-theme" class="chip-theme">-</span>
                 </div>
                 <div class="review-info-row">
+                  <strong>投稿形式</strong>
+                  <span id="rev-format" class="format-badge">-</span>
+                </div>
+                <div class="review-info-row">
                   <strong>タイトル・見出し</strong>
                   <span id="rev-title">-</span>
                 </div>
@@ -1743,8 +1828,9 @@
               </div>
 
               <!-- 右: カルーセルプレビュー -->
-              <div>
+              <div class="owner-review-side">
                 <h3>掲載イメージ</h3>
+                <span id="rev-preview-format-label" class="format-badge">フィード</span>
                 <div class="instagram-mockup" style="border-width:6px; max-width:240px; box-shadow:var(--shadow-sm); margin: 0 auto;">
                   <div class="mockup-header" style="padding:6px 8px; font-size:0.7rem;">
                     <div class="mockup-avatar" style="width:20px; height:20px; font-size:0.6rem;">☕</div>
@@ -1765,6 +1851,13 @@
                     <span class="mockup-hashtags" id="rev-mockup-tags"></span>
                   </div>
                 </div>
+
+                <div class="feedback-inline-panel" id="feedback-field-container">
+                  <label for="feedback-comment">フィードバックコメント</label>
+                  <div id="feedback-context" class="form-hint" style="margin-bottom:8px;">投稿を選択してください。</div>
+                  <textarea id="feedback-comment" rows="4" placeholder="投稿内容を確認しながら、差し戻し理由や承認時のメモを入力してください。"></textarea>
+                  <p class="form-hint">差し戻し時はコメント必須です。承認時は任意メモとして残せます。</p>
+                </div>
               </div>
             </div>
 
@@ -1777,12 +1870,6 @@
             </div>
 
             <hr style="border:none; border-top:1px solid var(--border); margin:20px 0;">
-
-            <!-- フィードバックコメント -->
-            <div class="form-group" id="feedback-field-container">
-              <label for="feedback-comment">フィードバックコメント (差し戻し時に必須)</label>
-              <textarea id="feedback-comment" rows="2" placeholder="差し戻し理由や承認時のメモを入力してください。"></textarea>
-            </div>
 
             <!-- アクション -->
             <div id="review-actions-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -1844,6 +1931,11 @@
 
   // フィルターチップの選択肢
   const filterOptions = ["明るめ", "ナチュラル", "あたたかい", "くっきり"];
+  const postFormatLabels = {
+    feed: 'フィード',
+    reel: 'リール',
+    story: 'ストーリー'
+  };
 
   // 読み込み完了時の処理
   window.addEventListener('DOMContentLoaded', () => {
@@ -1938,6 +2030,7 @@
         id: 100001,
         staff: "佐々木",
         date: formatDate(3),
+        format: "feed",
         theme: "新メニュー",
         title: "ふわふわスフレパンケーキ🍓",
         caption: "口の中でとろけるスフレパンケーキが新登場！たっぷりのいちごソースと一緒にどうぞ。",
@@ -1956,6 +2049,7 @@
         id: 100002,
         staff: "田中",
         date: formatDate(0),
+        format: "story",
         theme: "季節イベント",
         title: "初夏のいちごフェア🍓",
         caption: "いちごフェア開催！限定パフェやスムージーをたくさん用意しております。",
@@ -1974,6 +2068,7 @@
         id: 100003,
         staff: "山田",
         date: formatDate(5),
+        format: "reel",
         theme: "スタッフ紹介",
         title: "新しいバリスタの紹介☕",
         caption: "新メンバーのルイ君です！美味しいラテを入れてお待ちしております。",
@@ -2025,6 +2120,33 @@
       return { role: 'staff', name: val.split(':')[1] };
     }
     return { role: 'owner', name: 'オーナー' };
+  }
+
+  function getSelectedPostFormat() {
+    const formatObj = document.querySelector('input[name="post-format"]:checked');
+    return formatObj ? formatObj.value : 'feed';
+  }
+
+  function getPostFormatLabel(format) {
+    return postFormatLabels[format] || 'フィード';
+  }
+
+  function applyPreviewFormat(format, areaId, labelId) {
+    const area = document.getElementById(areaId);
+    if (!area) return;
+    area.classList.remove('format-feed', 'format-reel', 'format-story');
+    area.classList.add(`format-${format || 'feed'}`);
+
+    const label = document.getElementById(labelId);
+    if (label) label.textContent = getPostFormatLabel(format);
+  }
+
+  function applyStoryboardFormat(format) {
+    const isVertical = format === 'reel' || format === 'story';
+    [1, 2, 3].forEach(idx => {
+      const box = document.getElementById(`sb-upload-${idx}`);
+      if (box) box.classList.toggle('vertical-format', isVertical);
+    });
   }
 
   function syncCustomStaffInput() {
@@ -2108,8 +2230,7 @@
   }
 
   function switchStaffSubTab(tab) {
-    document.getElementById('subtab-create-btn').classList.remove('active');
-    document.getElementById('subtab-history-btn').classList.remove('active');
+    document.querySelectorAll('.sub-tab').forEach(btn => btn.classList.remove('active'));
     
     if (tab === 'create') {
       document.getElementById('subtab-create-btn').classList.add('active');
@@ -2240,6 +2361,18 @@
     } else {
       guidance.textContent = `現在${count}個です。10個以内を目安に整理してください。`;
       guidance.classList.add('warning');
+    }
+  }
+
+  function focusStaffSection(section) {
+    switchStaffSubTab('create');
+    document.querySelectorAll('.sub-tab').forEach(btn => btn.classList.remove('active'));
+    const btn = document.getElementById(`subtab-${section}-btn`);
+    if (btn) btn.classList.add('active');
+
+    const target = document.getElementById(`staff-section-${section}`);
+    if (target) {
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
     }
   }
 
@@ -2395,6 +2528,9 @@
 
   function updatePreview() {
     const cuts = collectStoryboardCuts();
+    const format = getSelectedPostFormat();
+    applyPreviewFormat(format, 'mockup-img-area', 'mockup-format-label');
+    applyStoryboardFormat(format);
 
     const prevBtn = document.querySelector('#staff-view .carousel-control.prev');
     const nextBtn = document.querySelector('#staff-view .carousel-control.next');
@@ -2413,6 +2549,7 @@
     const theme = themeObj ? themeObj.value : '';
 
     let textVal = '';
+    textVal += `【${getPostFormatLabel(format)}】`;
     if (theme) textVal += `【${theme}】`;
     if (title) textVal += (theme ? ' ' : '') + title + '\n\n';
     textVal += caption;
@@ -2441,6 +2578,7 @@
 
     const themeObj = document.querySelector('input[name="theme"]:checked');
     const theme = themeObj ? themeObj.value : 'その他';
+    const format = getSelectedPostFormat();
 
     const title = document.getElementById('post-title').value.trim();
     const caption = document.getElementById('caption').value;
@@ -2466,6 +2604,7 @@
       const subIdx = submissions.findIndex(s => s.id === currentEditingSubmissionId);
       if (subIdx !== -1) {
         submissions[subIdx].date = postDate;
+        submissions[subIdx].format = format;
         submissions[subIdx].theme = theme;
         submissions[subIdx].title = title;
         submissions[subIdx].caption = caption;
@@ -2484,6 +2623,7 @@
         id: Date.now(),
         staff: user.name,
         date: postDate,
+        format: format,
         theme: theme,
         title: title,
         caption: caption,
@@ -2514,6 +2654,9 @@
 
     const themes = document.querySelectorAll('input[name="theme"]');
     if (themes.length > 0) themes[0].checked = true;
+
+    const formats = document.querySelectorAll('input[name="post-format"]');
+    if (formats.length > 0) formats[0].checked = true;
 
     [1, 2, 3].forEach(idx => {
       deleteRowImage(idx);
@@ -2557,6 +2700,7 @@
     });
 
     document.querySelectorAll('input[name="theme"]').forEach(r => r.disabled = readonly);
+    document.querySelectorAll('input[name="post-format"]').forEach(r => r.disabled = readonly);
     document.querySelectorAll('.sns-check').forEach(c => c.disabled = readonly);
     
     [1, 2, 3].forEach(idx => {
@@ -2616,7 +2760,7 @@
       
       const metaSpan = document.createElement('span');
       metaSpan.className = 'history-item-meta';
-      metaSpan.textContent = `希望日: ${sub.date} | テーマ: ${sub.theme}`;
+      metaSpan.textContent = `希望日: ${sub.date} | 形式: ${getPostFormatLabel(sub.format)} | テーマ: ${sub.theme}`;
 
       infoDiv.appendChild(titleSpan);
       infoDiv.appendChild(metaSpan);
@@ -2673,6 +2817,9 @@
     const themeRadio = document.querySelector(`input[name="theme"][value="${sub.theme}"]`);
     if (themeRadio) themeRadio.checked = true;
 
+    const formatRadio = document.querySelector(`input[name="post-format"][value="${sub.format || 'feed'}"]`);
+    if (formatRadio) formatRadio.checked = true;
+
     [1, 2, 3].forEach((idx) => {
       const cut = sub.cuts[idx - 1];
       const img = document.getElementById(`sb-img-${idx}`);
@@ -2718,6 +2865,7 @@
       
       document.getElementById('editor-actions').classList.add('hidden');
       document.getElementById('correction-actions').classList.remove('hidden');
+      document.getElementById('correction-actions').querySelector('.btn').classList.remove('hidden');
     } else {
       notice.classList.add('hidden');
       document.getElementById('editor-title').textContent = `投稿案の確認 (${sub.status === 'approved' ? '承認済み' : 'レビュー待ち'})`;
@@ -2799,13 +2947,13 @@
       
       const staffSpan = document.createElement('span');
       staffSpan.className = 'list-item-staff';
-      staffSpan.textContent = `${sub.staff} (${sub.theme})`;
+      staffSpan.textContent = `${sub.staff} (${getPostFormatLabel(sub.format)} / ${sub.theme})`;
       
       const metaSpan = document.createElement('span');
       metaSpan.className = 'list-item-meta';
       const capText = sub.caption || '';
       const capPreview = capText.length > 25 ? capText.substring(0, 25) + '...' : capText;
-      metaSpan.textContent = `希望日: ${sub.date} | 「${capPreview}」`;
+      metaSpan.textContent = `希望日: ${sub.date} | ${sub.cuts ? sub.cuts.filter(c => c.image).length : 0}画像 | 「${capPreview}」`;
 
       infoDiv.appendChild(staffSpan);
       infoDiv.appendChild(metaSpan);
@@ -2952,7 +3100,7 @@
       
       const staffSpan = document.createElement('span');
       staffSpan.className = 'list-item-staff';
-      staffSpan.textContent = `${sub.staff} (${sub.theme})`;
+      staffSpan.textContent = `${sub.staff} (${getPostFormatLabel(sub.format)} / ${sub.theme})`;
       
       const metaSpan = document.createElement('span');
       metaSpan.className = 'list-item-meta';
@@ -2991,10 +3139,13 @@
     document.getElementById('rev-staff').textContent = sub.staff;
     document.getElementById('rev-date').textContent = sub.date;
     document.getElementById('rev-theme').textContent = sub.theme;
+    document.getElementById('rev-format').textContent = getPostFormatLabel(sub.format);
     document.getElementById('rev-title').textContent = sub.title || '（タイトルなし）';
     document.getElementById('rev-caption').textContent = sub.caption || '';
     document.getElementById('rev-tags').textContent = sub.tags.join(' ');
     document.getElementById('rev-memo').textContent = sub.memo || '（なし）';
+    document.getElementById('feedback-context').textContent =
+      `${sub.staff} / ${getPostFormatLabel(sub.format)} / ${sub.theme} / ${sub.date}`;
 
     const snsContainer = document.getElementById('rev-sns-checks');
     snsContainer.innerHTML = '';
@@ -3090,9 +3241,12 @@
   }
 
   function updateRevPreview(sub) {
+    const format = sub.format || 'feed';
+    applyPreviewFormat(format, 'rev-mockup-img-area', 'rev-preview-format-label');
     renderCarouselImage(sub.cuts, currentRevCarouselIndex, 'rev-img', 'rev-placeholder', 'rev-mockup-indicators');
     
     let textVal = '';
+    textVal += `【${getPostFormatLabel(format)}】`;
     if (sub.theme) textVal += `【${sub.theme}】`;
     if (sub.title) textVal += (sub.theme ? ' ' : '') + sub.title + '\n\n';
     textVal += sub.caption;

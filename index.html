@@ -2533,7 +2533,10 @@ body::before {
                   <label for="feedback-comment">フィードバックコメント</label>
                   <div id="feedback-context" class="form-hint" style="margin-bottom:8px;">投稿を選択してください。</div>
                   <textarea id="feedback-comment" rows="4" placeholder="投稿内容を確認しながら、差し戻し理由や承認時のメモを入力してください。"></textarea>
-                  <p class="form-hint">差し戻し時はコメント必須です。承認時は任意メモとして残せます。</p>
+                  <button type="button" class="btn btn-secondary" style="margin-top:10px;" onclick="saveFeedbackComment()">
+                    コメントを保存
+                  </button>
+                  <p id="feedback-save-status" class="form-hint">差し戻し時はコメント必須です。承認済み・差し戻し済みの投稿にも追記できます。</p>
                 </div>
               </div>
             </div>
@@ -4043,16 +4046,20 @@ body::before {
     updateRevPreview(sub);
 
     document.getElementById('feedback-comment').value = sub.feedback || '';
+    document.getElementById('feedback-save-status').textContent =
+      sub.status === 'pending'
+        ? '差し戻し時はコメント必須です。承認時は任意メモとして残せます。'
+        : '承認済み・差し戻し済みの投稿にも追記できます。';
 
     const actionContainer = document.getElementById('review-actions-container');
     const commentField = document.getElementById('feedback-comment');
     if (sub.status !== 'pending') {
       actionContainer.classList.add('hidden');
-      commentField.setAttribute('readonly', 'true');
     } else {
       actionContainer.classList.remove('hidden');
-      commentField.removeAttribute('readonly');
     }
+    commentField.removeAttribute('readonly');
+    commentField.disabled = false;
 
     document.querySelectorAll('.list-item').forEach(item => {
       item.classList.remove('active');
@@ -4103,6 +4110,31 @@ body::before {
   function closeStoryboardZoom() {
     const modal = document.getElementById('storyboard-zoom-modal');
     if (modal) modal.classList.add('hidden');
+  }
+
+  function saveFeedbackComment() {
+    if (!isOwnerAuthenticated) return;
+    if (currentReviewId === null) return;
+
+    const subIdx = submissions.findIndex(s => s.id === currentReviewId);
+    if (subIdx === -1) return;
+
+    const commentField = document.getElementById('feedback-comment');
+    submissions[subIdx].feedback = commentField.value.trim();
+    saveSubmissions();
+
+    const statusEl = document.getElementById('feedback-save-status');
+    statusEl.textContent = 'フィードバックコメントを保存しました。';
+    statusEl.classList.remove('warning');
+    statusEl.classList.add('good');
+
+    setTimeout(() => {
+      statusEl.classList.remove('good');
+      statusEl.textContent =
+        submissions[subIdx].status === 'pending'
+          ? '差し戻し時はコメント必須です。承認時は任意メモとして残せます。'
+          : '承認済み・差し戻し済みの投稿にも追記できます。';
+    }, 1800);
   }
 
   function updateStatus(newStatus) {

@@ -1207,11 +1207,39 @@ select:focus {
   min-width: 0;
 }
 
-#owner-main-content > .dashboard-hero,
-#owner-main-content > .stats,
-#owner-main-content > .calendar-dashboard-grid {
+.owner-dashboard-top {
   width: 100%;
   max-width: 100%;
+  margin: 0 0 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.owner-dashboard-left,
+.owner-dashboard-right {
+  min-width: 0;
+}
+
+.owner-dashboard-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-dashboard-left .dashboard-hero {
+  flex: 1 1 auto;
+}
+
+.owner-dashboard-right .calendar-dashboard-grid {
+  width: 100%;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 0;
+}
+
+.owner-dashboard-right .pending-panel {
+  min-height: 0;
 }
 
 .dashboard-hero {
@@ -1831,11 +1859,19 @@ select:focus {
     min-width: 0;
   }
 
-  #owner-main-content > .dashboard-hero,
-  #owner-main-content > .stats,
-  #owner-main-content > .calendar-dashboard-grid {
-    width: calc(100vw - 20px);
-    max-width: none;
+  .owner-dashboard-top {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .owner-dashboard-left,
+  .owner-dashboard-right {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 
   .dashboard-hero {
@@ -1979,8 +2015,12 @@ select:focus {
 }
 
 @media (min-width: 560px) and (max-width: 800px) {
-  .calendar-dashboard-grid {
-    grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.85fr);
+  .owner-dashboard-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .owner-dashboard-right .calendar-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -2563,6 +2603,8 @@ body::before {
 
     <!-- オーナー画面本体 (パスワード認証後に表示) -->
     <div id="owner-main-content" class="hidden">
+      <section class="owner-dashboard-top">
+        <div class="owner-dashboard-left">
       <div class="dashboard-hero">
         <div>
           <span class="dashboard-eyebrow">CAFÉ SOCIAL OPERATIONS</span>
@@ -2591,6 +2633,9 @@ body::before {
       </div>
 
       <!-- スケジュールカレンダー -->
+        </div>
+
+        <div class="owner-dashboard-right">
       <div class="calendar-dashboard-grid">
         <div class="card calendar-card">
           <div class="calendar-header">
@@ -2614,6 +2659,8 @@ body::before {
           </div>
         </div>
       </div>
+        </div>
+      </section>
 
       <div class="view-grid">
         <!-- 左カラム: 提出一覧 -->

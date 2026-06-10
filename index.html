@@ -3148,7 +3148,7 @@ body::before {
 
   function enterAppAs(role) {
     document.getElementById('login-choice-screen').classList.add('hidden');
-    document.getElementById('main-tabs-container').classList.remove('hidden');
+    document.getElementById('main-tabs-container').classList.add('hidden');
     document.getElementById('app-container').classList.remove('hidden');
     if (role === 'owner') {
       document.getElementById('current-user-select').value = 'owner';

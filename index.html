@@ -2450,9 +2450,14 @@ body::before {
     <div class="header-user-info">
       <label for="current-user-select" style="margin-bottom:0; font-size:0.72rem; color:var(--text-light)">操作者:</label>
       <select id="current-user-select" onchange="handleUserChange()">
-        <option value="staff:佐々木">スタッフ: 佐々木</option>
-        <option value="staff:田中">スタッフ: 田中</option>
-        <option value="staff:山田">スタッフ: 山田</option>
+        <option value="staff:りこ">スタッフ: りこ</option>
+        <option value="staff:もつ">スタッフ: もつ</option>
+        <option value="staff:みさと">スタッフ: みさと</option>
+        <option value="staff:ちー">スタッフ: ちー</option>
+        <option value="staff:まー">スタッフ: まー</option>
+        <option value="staff:MAX">スタッフ: MAX</option>
+        <option value="staff:そうた">スタッフ: そうた</option>
+        <option value="staff:あおの">スタッフ: あおの</option>
         <option value="staff:custom">スタッフ名を入力...</option>
         <option value="owner">オーナー</option>
       </select>
@@ -3081,6 +3086,8 @@ body::before {
   // セキュリティ・管理者ロック状態
   let isOwnerAuthenticated = false;
   const OWNER_PASS = "owner123"; // 管理者パスワード (答えは画面上に表示させません)
+  const DEFAULT_STAFF_VALUE = "staff:りこ";
+  const REMOVED_DEMO_STAFF = new Set(["佐々木", "田中", "山田"]);
 
   // カルーセルインデックス
   let currentCarouselIndex = 0;
@@ -3115,7 +3122,7 @@ body::before {
 
     initFilterChips();
     if (!loadSavedSubmissions()) {
-      initDemoData();
+      submissions = [];
       saveSubmissions();
     }
     showLoginChoice();
@@ -3158,7 +3165,7 @@ body::before {
       document.getElementById('current-user-select').value = 'owner';
       switchView('owner');
     } else {
-      document.getElementById('current-user-select').value = 'staff:佐々木';
+      document.getElementById('current-user-select').value = DEFAULT_STAFF_VALUE;
       switchView('staff');
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3237,7 +3244,12 @@ body::before {
       if (!raw) return false;
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) return false;
-      submissions = parsed.map(normalizeSubmission);
+      submissions = parsed
+        .map(normalizeSubmission)
+        .filter(sub => !REMOVED_DEMO_STAFF.has(sub.staff));
+      if (submissions.length !== parsed.length) {
+        saveSubmissions();
+      }
       return true;
     } catch (err) {
       console.warn('保存データの読み込みに失敗しました。', err);
@@ -3258,75 +3270,7 @@ body::before {
 
   // デモ用初期データ
   function initDemoData() {
-    const today = new Date();
-    const formatDate = (offset) => {
-      const d = new Date(today);
-      d.setDate(today.getDate() + offset);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const dd = String(d.getDate()).padStart(2, '0');
-      return `${yyyy}-${mm}-${dd}`;
-    };
-
-    submissions = [
-      {
-        id: 100001,
-        staff: "佐々木",
-        date: formatDate(3),
-        format: "feed",
-        theme: "新メニュー",
-        title: "ふわふわスフレパンケーキ🍓",
-        caption: "口の中でとろけるスフレパンケーキが新登場！たっぷりのいちごソースと一緒にどうぞ。",
-        tags: ["#新メニュー", "#スフレパンケーキ", "#ふわみんごカフェ"],
-        snsChecks: ["プロフィール誘導", "位置情報タグ設定", "フォロー促進"],
-        memo: "シズル感が伝わるように撮影しました。1コマ目を大きく見せたいです。",
-        status: "pending",
-        feedback: "",
-        cuts: [
-          { image: dummySvgDataUri, memo: "メイン：パンケーキを真上から自然光で", composition: "パンケーキを真上から自然光で撮影", purpose: "新作のふわふわ感をスイーツ好きに伝える", telop: "新作スフレパンケーキ登場", narration: "ふわっと軽い口どけの新作です。", filter: "明るめ" },
-          { image: dummySvgDataUri, memo: "サブ1：シロップをかけるアップ", composition: "シロップをかける手元をアップで撮影", purpose: "食べたい気持ちを高めるシズル訴求", telop: "たっぷり苺ソース", narration: "甘酸っぱい苺ソースをたっぷりかけて仕上げます。", filter: "あたたかい" },
-          { image: "", memo: "サブ2：店舗の看板と雰囲気", composition: "店内の落ち着いた雰囲気を背景に入れる", purpose: "来店イメージを持ってもらう", telop: "店内でゆっくりどうぞ", narration: "ふわみんごカフェでお待ちしています。", filter: "ナチュラル" }
-        ]
-      },
-      {
-        id: 100002,
-        staff: "田中",
-        date: formatDate(0),
-        format: "story",
-        theme: "季節イベント",
-        title: "初夏のいちごフェア🍓",
-        caption: "いちごフェア開催！限定パフェやスムージーをたくさん用意しております。",
-        tags: ["#いちごフェア", "#限定スイーツ", "#カフェ部"],
-        snsChecks: ["プロフィール誘導", "ストーリーズ連動", "位置情報タグ設定", "フォロー促進"],
-        memo: "フェア開始のアナウンス用です。",
-        status: "approved",
-        feedback: "写真のトーンがフェアに合っていて素晴らしいです！承認します。",
-        cuts: [
-          { image: dummySvgDataUri, memo: "メイン：いちごパフェのアップ", composition: "いちごパフェを正面寄りで華やかに撮影", purpose: "季節フェアをストーリーで即時告知", telop: "初夏のいちごフェア", narration: "期間限定のいちごフェアが始まりました。", filter: "明るめ" },
-          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" },
-          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" }
-        ]
-      },
-      {
-        id: 100003,
-        staff: "山田",
-        date: formatDate(5),
-        format: "reel",
-        theme: "スタッフ紹介",
-        title: "新しいバリスタの紹介☕",
-        caption: "新メンバーのルイ君です！美味しいラテを入れてお待ちしております。",
-        tags: ["#スタッフ紹介", "#バリスタ", "#ラテアート"],
-        snsChecks: ["プロフィール誘導", "フォロー促進"],
-        memo: "ルイ君のラテアート写真を載せたいです。",
-        status: "rejected",
-        feedback: "ラテアートの画像が登録されていないため、仮画像でもいいので設定した状態で提出してください。",
-        cuts: [
-          { image: "", memo: "ルイ君のラテアート写真", composition: "ラテアートとスタッフの手元を近めに撮影", purpose: "新スタッフの親しみやすさを常連さんに伝える", telop: "新バリスタ紹介", narration: "新しいバリスタのルイです。", filter: "くっきり" },
-          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" },
-          { image: "", memo: "", composition: "", purpose: "", telop: "", narration: "", filter: "ナチュラル" }
-        ]
-      }
-    ];
+    submissions = [];
   }
 
   // ==================== 操作者とビューの制御 ====================
@@ -3419,7 +3363,7 @@ body::before {
       // ドロップダウンの表示もスタッフに合わせる (オーナーからの切り替え時の同期)
       const user = getActiveUser();
       if (user.role !== 'staff') {
-        selectUser.value = 'staff:佐々木';
+        selectUser.value = DEFAULT_STAFF_VALUE;
       }
       syncCustomStaffInput();
       
@@ -3449,7 +3393,7 @@ body::before {
   }
 
   function startNewPostFromDashboard() {
-    document.getElementById('current-user-select').value = 'staff:佐々木';
+    document.getElementById('current-user-select').value = DEFAULT_STAFF_VALUE;
     syncCustomStaffInput();
     switchView('staff');
     resetForm();

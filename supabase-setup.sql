@@ -6,6 +6,9 @@ create table if not exists public.cafe_sns_state (
 
 alter table public.cafe_sns_state enable row level security;
 
+grant select, insert, update on public.cafe_sns_state to anon;
+grant select, insert, update on public.cafe_sns_state to authenticated;
+
 drop policy if exists "public read cafe sns state" on public.cafe_sns_state;
 create policy "public read cafe sns state"
 on public.cafe_sns_state

@@ -3119,8 +3119,8 @@ body::before {
   // To enable shared public-link saving, create the Supabase table in
   // supabase-setup.sql, then paste your project URL and anon public key below.
   const REMOTE_STORAGE = {
-    supabaseUrl: '',
-    supabaseAnonKey: '',
+    supabaseUrl: 'https://lrwopcgxlcrafcdjvxeh.supabase.co',
+    supabaseAnonKey: 'sb_publishable_EUMZOaau4CwQYFQ9zd6Dlw_033jH5Mb',
     table: 'cafe_sns_state',
     key: 'submissions'
   };
@@ -3287,7 +3287,9 @@ body::before {
   }
 
   function getRemoteEndpoint(query = '') {
-    const baseUrl = REMOTE_STORAGE.supabaseUrl.replace(/\/$/, '');
+    const baseUrl = REMOTE_STORAGE.supabaseUrl
+      .replace(/\/$/, '')
+      .replace(/\/rest\/v1$/, '');
     return `${baseUrl}/rest/v1/${REMOTE_STORAGE.table}${query}`;
   }
 

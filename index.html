@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>☕ CAFÉ SNS - Instagram 投稿管理</title>
+  <title>ふわみんごSNS投稿管理</title>
   <meta name="description" content="ネット接続不要・単一ファイルで動作する、カフェ専用のInstagram投稿・管理システム。">
+  <meta name="application-name" content="ふわみんごSNS投稿管理">
+  <meta name="apple-mobile-web-app-title" content="ふわみんごSNS投稿管理">
   
   <style>
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
@@ -577,6 +579,28 @@ h3 {
   color: var(--white);
   font-weight: 700;
   box-shadow: 0 4px 10px rgba(201, 134, 134, 0.25);
+}
+
+.custom-filter-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 10px 0 18px;
+}
+
+.custom-filter-row input {
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+
+.custom-filter-row button {
+  min-height: 40px;
+  width: auto;
+  margin-top: 0;
+  padding: 8px 14px;
+  border-radius: 12px;
+  white-space: nowrap;
 }
 
 /* Forms general */
@@ -2229,21 +2253,55 @@ select:focus {
   .header-container {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 12px;
+    gap: 10px;
+    align-items: center;
   }
 
   .header-logo {
-    font-size: 1.15rem;
+    min-width: 0;
+    font-size: 1rem;
+  }
+
+  .header-logo span {
+    white-space: normal;
+    line-height: 1.15;
   }
 
   .header-user-info {
     justify-self: end;
-    padding: 4px 10px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 6px;
+    max-width: 190px;
+    padding: 5px 8px;
+    border-radius: 16px;
+  }
+
+  .header-user-info label {
+    line-height: 1.2;
+    white-space: normal;
   }
 
   .header-user-info select {
-    min-width: 120px;
-    font-size: 0.8rem;
+    min-width: 0;
+    width: 100%;
+    padding: 5px 24px 5px 10px;
+    min-height: 32px;
+    font-size: 0.78rem;
+    text-overflow: ellipsis;
+  }
+
+  .header-user-info input {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .custom-filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .custom-filter-row button {
+    width: 100%;
   }
 }
 
@@ -2601,6 +2659,10 @@ body::before {
         <div class="form-group" id="staff-section-storyboard">
           <label>🎬 絵コンテ入力 (画像は最大3枚まで設定できます)</label>
           <div class="storyboard-container">
+            <div class="custom-filter-row">
+              <input type="text" id="custom-filter-input" placeholder="新しいフィルター項目を追加（例：夕方っぽく）">
+              <button type="button" class="btn btn-secondary" onclick="addCustomFilterOption()">＋ 追加</button>
+            </div>
             
             <!-- コマ 1 (メイン画像) -->
             <div class="storyboard-box" id="sb-box-1">
@@ -3109,13 +3171,14 @@ body::before {
   let calendarMonth = 5; // 0-indexed (5 = 6月)
 
   // フィルターチップの選択肢
-  const filterOptions = ["明るめ", "ナチュラル", "あたたかい", "くっきり"];
+  let filterOptions = ["明るめ", "ナチュラル", "あたたかい", "くっきり"];
   const postFormatLabels = {
     feed: 'フィード',
     reel: 'リール',
     story: 'ストーリー'
   };
   const STORAGE_KEY = 'fuwamingoCafeSnsSubmissionsV1';
+  const FILTER_OPTIONS_KEY = 'fuwamingoCafeSnsFilterOptionsV1';
   // To enable shared public-link saving, create the Supabase table in
   // supabase-setup.sql, then paste your project URL and anon public key below.
   const REMOTE_STORAGE = {
@@ -3139,6 +3202,7 @@ body::before {
     calendarYear = today.getFullYear();
     calendarMonth = today.getMonth();
 
+    loadFilterOptions();
     initFilterChips();
     if (!loadSavedSubmissions()) {
       submissions = [];
@@ -3161,6 +3225,13 @@ body::before {
     });
 
     document.getElementById('post-date').addEventListener('change', updateDateGuidance);
+
+    document.getElementById('custom-filter-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addCustomFilterOption();
+      }
+    });
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -3191,8 +3262,60 @@ body::before {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function loadFilterOptions() {
+    try {
+      const raw = localStorage.getItem(FILTER_OPTIONS_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (!Array.isArray(saved)) return;
+      const merged = [...filterOptions, ...saved]
+        .map(opt => String(opt).trim())
+        .filter(Boolean);
+      filterOptions = [...new Set(merged)];
+    } catch (err) {
+      console.warn('Filter options load failed.', err);
+    }
+  }
+
+  function saveFilterOptions() {
+    try {
+      localStorage.setItem(FILTER_OPTIONS_KEY, JSON.stringify(filterOptions));
+    } catch (err) {
+      console.warn('Filter options save failed.', err);
+    }
+  }
+
+  function getSelectedFilterValues() {
+    const values = {};
+    [1, 2, 3].forEach(idx => {
+      const selected = document.querySelector(`input[name="filter-${idx}"]:checked`);
+      values[idx] = selected ? selected.value : '';
+    });
+    return values;
+  }
+
+  function addCustomFilterOption() {
+    const input = document.getElementById('custom-filter-input');
+    const value = input.value.trim();
+    if (!value) {
+      input.focus();
+      return;
+    }
+    if (filterOptions.includes(value)) {
+      alert('同じフィルター項目がすでにあります。');
+      input.select();
+      return;
+    }
+    const selectedValues = getSelectedFilterValues();
+    filterOptions.push(value);
+    saveFilterOptions();
+    initFilterChips(selectedValues);
+    input.value = '';
+    updatePreview();
+  }
+
   // 各コマのフィルターイメージ用チップを生成
-  function initFilterChips() {
+  function initFilterChips(selectedValues = {}) {
     [1, 2, 3].forEach(idx => {
       const container = document.getElementById(`sb-chips-${idx}`);
       container.innerHTML = '';
@@ -3204,7 +3327,7 @@ body::before {
         input.type = 'radio';
         input.name = `filter-${idx}`;
         input.value = opt;
-        if (optIdx === 0) input.checked = true; // デフォルトは「明るめ」
+        if (selectedValues[idx] ? selectedValues[idx] === opt : optIdx === 0) input.checked = true; // デフォルトは「明るめ」
         input.onchange = () => updatePreview();
         
         const span = document.createElement('span');

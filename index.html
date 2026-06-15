@@ -488,6 +488,7 @@ h3 {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: filter 0.25s ease;
 }
 
 .storyboard-upload-area span.placeholder-text {
@@ -956,6 +957,7 @@ select:focus {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: filter 0.25s ease;
 }
 
 .mockup-image-placeholder {
@@ -1861,6 +1863,7 @@ select:focus {
   border-radius: 12px;
   background: #FAF8F5;
   border: 1px solid rgba(43, 33, 31, 0.08);
+  transition: filter 0.25s ease;
 }
 
 .storyboard-zoom-meta {
@@ -3172,6 +3175,24 @@ body::before {
 
   // フィルターチップの選択肢
   let filterOptions = ["明るめ", "ナチュラル", "あたたかい", "くっきり"];
+  const FILTER_STYLES = {
+    bright: {
+      label: '明るめ',
+      cssFilter: 'brightness(1.12) contrast(1.03) saturate(1.08)'
+    },
+    natural: {
+      label: 'ナチュラル',
+      cssFilter: 'brightness(1.03) contrast(1.02) saturate(1.04)'
+    },
+    warm: {
+      label: 'あたたかい',
+      cssFilter: 'brightness(1.06) contrast(1.04) saturate(1.12) sepia(0.08)'
+    },
+    clear: {
+      label: 'くっきり',
+      cssFilter: 'brightness(1.04) contrast(1.14) saturate(1.14)'
+    }
+  };
   const postFormatLabels = {
     feed: 'フィード',
     reel: 'リール',
@@ -3285,6 +3306,23 @@ body::before {
     }
   }
 
+  function rememberFiltersFromSubmissions(source = submissions) {
+    const nextOptions = [...filterOptions];
+    source.forEach(sub => {
+      (sub.cuts || []).forEach(cut => {
+        const label = cut && cut.filter ? String(cut.filter).trim() : '';
+        if (label && !nextOptions.includes(label)) {
+          nextOptions.push(label);
+        }
+      });
+    });
+    if (nextOptions.length !== filterOptions.length) {
+      filterOptions = nextOptions;
+      saveFilterOptions();
+      initFilterChips(getSelectedFilterValues());
+    }
+  }
+
   function getSelectedFilterValues() {
     const values = {};
     [1, 2, 3].forEach(idx => {
@@ -3312,6 +3350,33 @@ body::before {
     initFilterChips(selectedValues);
     input.value = '';
     updatePreview();
+  }
+
+  function getFilterStyle(filterLabel) {
+    const found = Object.values(FILTER_STYLES).find(style => style.label === filterLabel);
+    return found || FILTER_STYLES.natural;
+  }
+
+  function applyFilterToImage(imgEl, filterLabel) {
+    if (!imgEl) return;
+    const style = getFilterStyle(filterLabel);
+    imgEl.style.filter = style.cssFilter;
+  }
+
+  function clearImageFilter(imgEl) {
+    if (!imgEl) return;
+    imgEl.style.filter = '';
+  }
+
+  function updateStoryboardUploadFilters(cuts = collectStoryboardCuts()) {
+    cuts.forEach((cut, idx) => {
+      const imgEl = document.getElementById(`sb-img-${idx + 1}`);
+      if (imgEl && cut && cut.image) {
+        applyFilterToImage(imgEl, cut.filter);
+      } else {
+        clearImageFilter(imgEl);
+      }
+    });
   }
 
   // 各コマのフィルターイメージ用チップを生成
@@ -3390,6 +3455,7 @@ body::before {
       submissions = parsed
         .map(normalizeSubmission)
         .filter(sub => !REMOVED_DEMO_STAFF.has(sub.staff));
+      rememberFiltersFromSubmissions(submissions);
       if (submissions.length !== parsed.length) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
       }
@@ -3430,6 +3496,7 @@ body::before {
     submissions = remoteData
       .map(normalizeSubmission)
       .filter(sub => !REMOVED_DEMO_STAFF.has(sub.staff));
+    rememberFiltersFromSubmissions(submissions);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions));
     renderDashboard();
     renderCalendar();
@@ -3875,7 +3942,7 @@ body::before {
       const telop = document.getElementById(`sb-telop-${idx}`).value;
       const narration = document.getElementById(`sb-narration-${idx}`).value;
       const filterRadio = document.querySelector(`input[name="filter-${idx}"]:checked`);
-      const filter = filterRadio ? filterRadio.value : 'ナチュラル';
+      const filter = filterRadio ? filterRadio.value : '明るめ';
       cuts.push({
         image: img.startsWith('data:') ? img : '',
         memo: composition,
@@ -3927,11 +3994,13 @@ body::before {
     if (cut && cut.image) {
       placeholderEl.classList.add('hidden');
       imgEl.src = cut.image;
+      applyFilterToImage(imgEl, cut.filter);
       imgEl.classList.remove('hidden');
     } else {
       placeholderEl.classList.remove('hidden');
       imgEl.classList.add('hidden');
       imgEl.src = '';
+      clearImageFilter(imgEl);
       
       const cutNum = index + 1;
       placeholderEl.replaceChildren();
@@ -3964,6 +4033,7 @@ body::before {
     const format = getSelectedPostFormat();
     applyPreviewFormat(format, 'mockup-img-area', 'mockup-format-label');
     applyStoryboardFormat(format);
+    updateStoryboardUploadFilters(cuts);
 
     const prevBtn = document.querySelector('#staff-view .carousel-control.prev');
     const nextBtn = document.querySelector('#staff-view .carousel-control.next');
@@ -4189,6 +4259,7 @@ body::before {
       const img = document.createElement('img');
       img.className = 'history-item-thumb';
       img.src = thumbUrl;
+      applyFilterToImage(img, sub.cuts && sub.cuts[0] ? sub.cuts[0].filter : '');
       
       const infoDiv = document.createElement('div');
       infoDiv.className = 'history-item-info';
@@ -4267,11 +4338,13 @@ body::before {
       
       if (cut && cut.image) {
         img.src = cut.image;
+        applyFilterToImage(img, cut.filter);
         img.classList.remove('hidden');
         ph.classList.add('hidden');
         if (!readonly) delBtn.classList.remove('hidden');
       } else {
         img.src = '';
+        clearImageFilter(img);
         img.classList.add('hidden');
         ph.classList.remove('hidden');
         delBtn.classList.add('hidden');
@@ -4384,6 +4457,7 @@ body::before {
       const img = document.createElement('img');
       img.className = 'list-item-thumb';
       img.src = thumbUrl;
+      applyFilterToImage(img, sub.cuts && sub.cuts[0] ? sub.cuts[0].filter : '');
       
       const infoDiv = document.createElement('div');
       infoDiv.className = 'list-item-info';
@@ -4444,6 +4518,7 @@ body::before {
       const thumb = document.createElement('img');
       thumb.className = 'pending-review-thumb';
       thumb.src = (sub.cuts && sub.cuts[0] && sub.cuts[0].image) ? sub.cuts[0].image : dummySvgDataUri;
+      applyFilterToImage(thumb, sub.cuts && sub.cuts[0] ? sub.cuts[0].filter : '');
 
       const info = document.createElement('div');
       const title = document.createElement('span');
@@ -4603,6 +4678,7 @@ body::before {
       const img = document.createElement('img');
       img.className = 'list-item-thumb';
       img.src = thumbUrl;
+      applyFilterToImage(img, sub.cuts && sub.cuts[0] ? sub.cuts[0].filter : '');
       
       const infoDiv = document.createElement('div');
       infoDiv.className = 'list-item-info';
@@ -4683,6 +4759,7 @@ body::before {
       
       const img = document.createElement('img');
       img.src = cut.image || dummySvgDataUri;
+      applyFilterToImage(img, cut.filter);
       img.alt = `絵コンテ カット${idx + 1}`;
       img.onclick = () => openStoryboardZoom(cut, idx);
       
@@ -4782,7 +4859,9 @@ body::before {
   function openStoryboardZoom(cut, index) {
     const modal = document.getElementById('storyboard-zoom-modal');
     document.getElementById('storyboard-zoom-title').textContent = `絵コンテ詳細 カット ${index + 1}`;
-    document.getElementById('storyboard-zoom-img').src = cut.image || dummySvgDataUri;
+    const zoomImg = document.getElementById('storyboard-zoom-img');
+    zoomImg.src = cut.image || dummySvgDataUri;
+    applyFilterToImage(zoomImg, cut.filter);
     document.getElementById('storyboard-zoom-composition').textContent = cut.composition || cut.memo || '（記入なし）';
     document.getElementById('storyboard-zoom-purpose').textContent = cut.purpose || '（記入なし）';
     document.getElementById('storyboard-zoom-telop').textContent = cut.telop || '（記入なし）';

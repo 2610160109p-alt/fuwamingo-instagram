@@ -586,7 +586,31 @@ h3 {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
-  margin: 10px 0 18px;
+  margin-top: 10px;
+}
+
+.custom-filter-panel {
+  padding: 14px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(201, 164, 106, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.custom-filter-title {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.custom-filter-hint {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
 }
 
 .custom-filter-row input {
@@ -602,6 +626,25 @@ h3 {
   padding: 8px 14px;
   border-radius: 12px;
   white-space: nowrap;
+}
+
+.custom-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.custom-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(201, 164, 106, 0.13);
+  color: var(--secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 /* Forms general */
@@ -2662,9 +2705,14 @@ body::before {
         <div class="form-group" id="staff-section-storyboard">
           <label>🎬 絵コンテ入力 (画像は最大3枚まで設定できます)</label>
           <div class="storyboard-container">
-            <div class="custom-filter-row">
-              <input type="text" id="custom-filter-input" placeholder="新しいフィルター項目を追加（例：夕方っぽく）">
-              <button type="button" class="btn btn-secondary" onclick="addCustomFilterOption()">＋ 追加</button>
+            <div class="custom-filter-panel">
+              <strong class="custom-filter-title">フィルター項目を作成・追加</strong>
+              <p class="custom-filter-hint">撮影イメージに合わせて、店舗独自のフィルター項目を追加できます。</p>
+              <div class="custom-filter-row">
+                <input type="text" id="custom-filter-input" placeholder="例：夕方っぽく、淡いピンク、シネマ風">
+                <button type="button" class="btn btn-secondary" onclick="addCustomFilterOption()">＋ 追加</button>
+              </div>
+              <div id="filter-options-preview" class="custom-filter-list"></div>
             </div>
             
             <!-- コマ 1 (メイン画像) -->
@@ -3225,6 +3273,7 @@ body::before {
 
     loadFilterOptions();
     initFilterChips();
+    renderFilterOptionsPreview();
     if (!loadSavedSubmissions()) {
       submissions = [];
       saveSubmissions();
@@ -3306,6 +3355,18 @@ body::before {
     }
   }
 
+  function renderFilterOptionsPreview() {
+    const container = document.getElementById('filter-options-preview');
+    if (!container) return;
+    container.innerHTML = '';
+    filterOptions.forEach(option => {
+      const pill = document.createElement('span');
+      pill.className = 'custom-filter-pill';
+      pill.textContent = option;
+      container.appendChild(pill);
+    });
+  }
+
   function rememberFiltersFromSubmissions(source = submissions) {
     const nextOptions = [...filterOptions];
     source.forEach(sub => {
@@ -3320,6 +3381,7 @@ body::before {
       filterOptions = nextOptions;
       saveFilterOptions();
       initFilterChips(getSelectedFilterValues());
+      renderFilterOptionsPreview();
     }
   }
 
@@ -3348,6 +3410,7 @@ body::before {
     filterOptions.push(value);
     saveFilterOptions();
     initFilterChips(selectedValues);
+    renderFilterOptionsPreview();
     input.value = '';
     updatePreview();
   }
